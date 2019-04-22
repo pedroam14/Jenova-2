@@ -1,6 +1,6 @@
 #define OLC_PGE_APPLICATION
-#define OLC_PGEX_GFX3D
 #include "Jenova.h"
+#define JENOVA3D
 #include "Jenova3D.h"
 #include <strstream>
 #include <fstream>
@@ -12,30 +12,27 @@ public:
 	{
 		sAppName = "Example";
 	}
+	JenovaSpace::GFX3D::Mesh mesh;
+	JenovaSpace::GFX3D::PipeLine pipeline;
+
 public:
 	bool OnUserCreate() override
 	{
 		//called once at the start, so create things here
+		mesh.LoadObjectFromFile("tifa.obj");
 		return true;
 	}
 
 	bool OnUserUpdate(double fElapsedTime) override
 	{
-		JenovaSpace::GFX3D::Mesh mesh;
-		mesh.LoadObjectFromFile("tifa.obj");
-		JenovaSpace::GFX3D::PipeLine pipeline;
-		pipeline.Render(mesh.tris);
+		pipeline.Render(mesh.triangles, true, JenovaSpace::GFX3D::RENDER_FLAT);
 		return true;
-	}
-	int GetLight(double lum) 
-	{
-		return (int)(255.0 * lum);
 	}
 };
 int main()
 {
 	Example demo;
-	if (demo.Construct(256, 240, 4, 4))
+	if (demo.Construct(768, 480, 2, 2))
 		demo.Start();
 	return 0;
 }
