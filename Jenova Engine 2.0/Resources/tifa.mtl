@@ -1,0 +1,222 @@
+# Blender MTL File: 'None'
+# Material Count: 20
+
+newmtl Material.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl Material_#103
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#116
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#128
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\shoetops.png
+
+newmtl Material_#141
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\glovesandshoes.png
+
+newmtl Material_#154
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\glovesandshoes.png
+
+newmtl Material_#167
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\arms.png
+
+newmtl Material_#181
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#196
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\shirt.png
+
+newmtl Material_#212
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#229
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#247
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\suspendersandarmor.png
+
+newmtl Material_#286
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\shirt.png
+
+newmtl Material_#306
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\shoetops.png
+
+newmtl Material_#327
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\belt.png
+
+newmtl Material_#349
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skin1.png
+
+newmtl Material_#38
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\hair.png
+
+newmtl Material_#51
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\hair.png
+
+newmtl Material_#64
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\bracers.png
+map_d C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\bracers.png
+
+newmtl Material_#77
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:\\Users\\LABCG\\Downloads\\FF7 main characters pack\\Tifa\\skirt.png
