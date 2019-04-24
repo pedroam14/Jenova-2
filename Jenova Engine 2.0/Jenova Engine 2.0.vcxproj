@@ -121,6 +121,11 @@
     <ClInclude Include="Jenova.h" />
     <ClInclude Include="Jenova3D.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\City_Roads1_mip0.png" />
+    <Image Include="Resources\tifa.png" />
+    <Image Include="Resources\vivi.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

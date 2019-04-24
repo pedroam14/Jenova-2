@@ -27,4 +27,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\City_Roads1_mip0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\tifa.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\vivi.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
