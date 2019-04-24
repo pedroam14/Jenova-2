@@ -16,312 +16,51 @@ public:
 private:
 	JenovaSpace::GFX3D::Mesh mesh;
 	JenovaSpace::GFX3D::PipeLine renderingPipeline;
+	JenovaSpace::Sprite *sprite;
 
-	JenovaSpace::GFX3D::Vector3D vectorUp = {0, 1, 0};
-	JenovaSpace::GFX3D::Vector3D vectorEye = {0, 0, -10.0};
-	JenovaSpace::GFX3D::Vector3D vectorLookDirection = {0, 0, 1};
+	JenovaSpace::GFX3D::Vector3D vectorUp = { 0, 1, 0 };
+	JenovaSpace::GFX3D::Vector3D vectorEye = { 0, 0, -10.0 };
+	JenovaSpace::GFX3D::Vector3D vectorLookDirection = { 0, 0, 1 };
 
 	double theta;
 
 public:
 	bool OnUserCreate() override
 	{
-		//initialization stuff, setting up the display and the projection in world space
+		//initialization stuf, setting up the display and the projection in world space
 		JenovaSpace::GFX3D::ConfigureDisplay();
 		renderingPipeline.SetProjection(90.0, (double)ScreenHeight() / (double)ScreenWidth(), 0.1, 1000.0, 0.0, 0.0, ScreenWidth(), ScreenHeight());
+
+		sprite = new JenovaSpace::Sprite("E:\Pedro\Jenova Engine 2.0\Jenova Engine 2.0\Resources\PlayStation - Final Fantasy 8 - Squall Leonhart\ffdtex1.png");
 		//cube, meant for debugging only desu
 		///*
 		mesh.triangles =
-			{
-				// SOUTH
-				{
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+		{
+			// SOUTH
+			{ 0.0, 0.0, 0.0, 1.0,    0.0, 1.0, 0.0, 1.0,    1.0, 1.0, 0.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0,},
+			{ 0.0, 0.0, 0.0, 1.0,    1.0, 1.0, 0.0, 1.0,    1.0, 0.0, 0.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0,},
 
-				// EAST
-				{
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+			// EAST           																			   
+			{ 1.0, 0.0, 0.0, 1.0,    1.0, 1.0, 0.0, 1.0,    1.0, 1.0, 1.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0,},
+			{ 1.0, 0.0, 0.0, 1.0,    1.0, 1.0, 1.0, 1.0,    1.0, 0.0, 1.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0,},
 
-				// NORTH
-				{
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+			// NORTH           																			   
+			{ 1.0, 0.0, 1.0, 1.0,    1.0, 1.0, 1.0, 1.0,    0.0, 1.0, 1.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0, },
+			{ 1.0, 0.0, 1.0, 1.0,    0.0, 1.0, 1.0, 1.0,    0.0, 0.0, 1.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0, },
 
-				// WEST
-				{
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+			// WEST            																			   
+			{ 0.0, 0.0, 1.0, 1.0,    0.0, 1.0, 1.0, 1.0,    0.0, 1.0, 0.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0,},
+			{ 0.0, 0.0, 1.0, 1.0,    0.0, 1.0, 0.0, 1.0,    0.0, 0.0, 0.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0,},
 
-				// TOP
-				{
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+			// TOP             																			   
+			{ 0.0, 1.0, 0.0, 1.0,    0.0, 1.0, 1.0, 1.0,    1.0, 1.0, 1.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0,},
+			{ 0.0, 1.0, 0.0, 1.0,    1.0, 1.0, 1.0, 1.0,    1.0, 1.0, 0.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0,},
 
-				// BOTTOM
-				{
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-				},
-				{
-					1.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					1.0,
-					0.0,
-					0.0,
-					1.0,
-					1.0,
-					0.0,
-				},
+			// BOTTOM          																			  
+			{ 1.0, 0.0, 1.0, 1.0,    0.0, 0.0, 1.0, 1.0,    0.0, 0.0, 0.0, 1.0,		0.0, 1.0,		0.0, 0.0,		1.0, 0.0,},
+			{ 1.0, 0.0, 1.0, 1.0,    0.0, 0.0, 0.0, 1.0,    1.0, 0.0, 0.0, 1.0,		0.0, 1.0,		1.0, 0.0,		1.0, 1.0,},
 
-			};
+		};
 		//*/
 		return true;
 	}
@@ -337,11 +76,14 @@ public:
 
 		JenovaSpace::GFX3D::Matrix4x4 rotationMatrixX = JenovaSpace::GFX3D::Math::Mat_MakeRotationX(theta);
 		JenovaSpace::GFX3D::Matrix4x4 rotationMatrixZ = JenovaSpace::GFX3D::Math::Mat_MakeRotationZ(theta / 3.0);
-		JenovaSpace::GFX3D::Matrix4x4 worldMatrix = JenovaSpace::GFX3D::Math::Mat_MultiplyMatrix(rotationMatrixX,rotationMatrixZ);
-		
+		JenovaSpace::GFX3D::Matrix4x4 worldMatrix = JenovaSpace::GFX3D::Math::Mat_MultiplyMatrix(rotationMatrixX, rotationMatrixZ);
+
 		renderingPipeline.SetTransform(worldMatrix);
-		renderingPipeline.Render(mesh.triangles,true,JenovaSpace::GFX3D::RENDER_WIRE);
-		
+
+		renderingPipeline.SetTexture(sprite);
+
+		renderingPipeline.Render(mesh.triangles, true);
+
 		return true;
 	}
 };

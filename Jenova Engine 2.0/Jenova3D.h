@@ -20,7 +20,6 @@ public:
 	{
 		double x = 0;
 		double y = 0;
-		double z = 0;
 	};
 
 	struct Vector3D
@@ -157,9 +156,9 @@ public:
 	inline static void DrawTriangleFlat(JenovaSpace::GFX3D::Triangle &tri);
 	inline static void DrawTriangleWire(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Pixel col = JenovaSpace::WHITE);
 	inline static void DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Sprite *spr);
-	inline static void TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
-										int x2, int y2, double u2, double v2, double w2,
-										int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine = false);
+	inline static void TexturedTriangle(int x1, int y1, double u1, double v1,
+										int x2, int y2, double u2, double v2,
+										int x3, int y3, double u3, double v3, JenovaSpace::Sprite *spr, bool affine = false);
 
 	// Draws a sprite with the transform applied
 	//inline static void DrawSprite(JenovaSpace::Sprite *sprite, JenovaSpace::GFX2D::Transform2D &transform);
@@ -526,12 +525,10 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 		out_tri1.p[1] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0], t);
 		out_tri1.t[1].x = t * (outside_tex[0]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[1].y = t * (outside_tex[0]->y - inside_tex[0]->y) + inside_tex[0]->y;
-		out_tri1.t[1].z = t * (outside_tex[0]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
 		out_tri1.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[1], t);
 		out_tri1.t[2].x = t * (outside_tex[1]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[2].y = t * (outside_tex[1]->y - inside_tex[0]->y) + inside_tex[0]->y;
-		out_tri1.t[2].z = t * (outside_tex[1]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
 		return 1; //return the newly formed single triangle
 	}
@@ -555,7 +552,6 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 		out_tri1.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0], t);
 		out_tri1.t[2].x = t * (outside_tex[0]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[2].y = t * (outside_tex[0]->y - inside_tex[0]->y) + inside_tex[0]->y;
-		out_tri1.t[2].z = t * (outside_tex[0]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
 		//the second Triangle is composed of one of he inside points, a new point determined by the intersection of the other side of the Triangle and the plane, and the newly created point above
 		out_tri2.p[1] = *inside_points[1];
@@ -565,7 +561,6 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 		out_tri2.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[1], *outside_points[0], t);
 		out_tri2.t[2].x = t * (outside_tex[0]->x - inside_tex[1]->x) + inside_tex[1]->x;
 		out_tri2.t[2].y = t * (outside_tex[0]->y - inside_tex[1]->y) + inside_tex[1]->y;
-		out_tri2.t[2].z = t * (outside_tex[0]->z - inside_tex[1]->z) + inside_tex[1]->z;
 		return 2; //return two newly formed triangles which form a quad
 	}
 
@@ -582,9 +577,9 @@ void GFX3D::DrawTriangleWire(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Pix
 	pge->DrawTriangle(tri.p[0].x, tri.p[0].y, tri.p[1].x, tri.p[1].y, tri.p[2].x, tri.p[2].y, col);
 }
 
-void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
-							 int x2, int y2, double u2, double v2, double w2,
-							 int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine)
+void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1,
+							 int x2, int y2, double u2, double v2,
+							 int x3, int y3, double u3, double v3, JenovaSpace::Sprite *spr, bool affine)
 
 {
 	if (y2 < y1)
@@ -593,7 +588,6 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		std::swap(x1, x2);
 		std::swap(u1, u2);
 		std::swap(v1, v2);
-		std::swap(w1, w2);
 	}
 
 	if (y3 < y1)
@@ -602,7 +596,6 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		std::swap(x1, x3);
 		std::swap(u1, u3);
 		std::swap(v1, v3);
-		std::swap(w1, w3);
 	}
 
 	if (y3 < y2)
@@ -611,27 +604,23 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		std::swap(x2, x3);
 		std::swap(u2, u3);
 		std::swap(v2, v3);
-		std::swap(w2, w3);
 	}
 
 	int dy1 = y2 - y1;
 	int dx1 = x2 - x1;
 	double dv1 = v2 - v1;
 	double du1 = u2 - u1;
-	double dw1 = w2 - w1;
 
 	int dy2 = y3 - y1;
 	int dx2 = x3 - x1;
 	double dv2 = v3 - v1;
 	double du2 = u3 - u1;
-	double dw2 = w3 - w1;
 
-	double tex_u, tex_v, tex_w;
+	double tex_u, tex_v;
 
 	double dax_step = 0, dbx_step = 0,
 		   du1_step = 0, dv1_step = 0,
-		   du2_step = 0, dv2_step = 0,
-		   dw1_step = 0, dw2_step = 0;
+		   du2_step = 0, dv2_step = 0;
 
 	if (dy1)
 		dax_step = dx1 / (double)abs(dy1);
@@ -642,104 +631,44 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		du1_step = du1 / (double)abs(dy1);
 	if (dy1)
 		dv1_step = dv1 / (double)abs(dy1);
-	if (dy1)
-		dw1_step = dw1 / (double)abs(dy1);
 
 	if (dy2)
 		du2_step = du2 / (double)abs(dy2);
 	if (dy2)
 		dv2_step = dv2 / (double)abs(dy2);
-	if (dy2)
-		dw2_step = dw2 / (double)abs(dy2);
 
 	if (dy1)
 	{
-		if (!affine)
+		for (int i = y1; i <= y2; i++)
 		{
-			for (int i = y1; i <= y2; i++)
+			int ax = x1 + (double)(i - y1) * dax_step;
+			int bx = x1 + (double)(i - y1) * dbx_step;
+
+			double tex_su = u1 + (double)(i - y1) * du1_step;
+			double tex_sv = v1 + (double)(i - y1) * dv1_step;
+
+			double tex_eu = u1 + (double)(i - y1) * du2_step;
+			double tex_ev = v1 + (double)(i - y1) * dv2_step;
+
+			if (ax > bx)
 			{
-				int ax = x1 + (double)(i - y1) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
-
-				double tex_su = u1 + (double)(i - y1) * du1_step;
-				double tex_sv = v1 + (double)(i - y1) * dv1_step;
-				double tex_sw = w1 + (double)(i - y1) * dw1_step;
-
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
-				double tex_ew = w1 + (double)(i - y1) * dw2_step;
-
-				if (ax > bx)
-				{
-					std::swap(ax, bx);
-					std::swap(tex_su, tex_eu);
-					std::swap(tex_sv, tex_ev);
-					std::swap(tex_sw, tex_ew);
-				}
-
-				tex_u = tex_su;
-				tex_v = tex_sv;
-				tex_w = tex_sw;
-
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
-
-				for (int j = ax; j < bx; j++)
-				{
-					tex_u = (1.0f - t) * tex_su + t * tex_eu;
-					tex_v = (1.0f - t) * tex_sv + t * tex_ev;
-					tex_w = (1.0f - t) * tex_sw + t * tex_ew;
-					if (tex_w > m_DepthBuffer[i * pge->ScreenWidth() + j])
-					{
-						pge->Draw(j, i, spr->Sample(tex_u / tex_w, tex_v / tex_w));
-						m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_w;
-					}
-					t += tstep;
-				}
+				std::swap(ax, bx);
+				std::swap(tex_sv, tex_ev);
 			}
-		}
-		else
-		{
-			for (int i = y1; i <= y2; i++)
+
+			tex_u = tex_su;
+			tex_v = tex_sv;
+
+			double tstep = 1.0f / ((double)(bx - ax));
+			double t = 0.0f;
+
+			for (int j = ax; j < bx; j++)
 			{
-				int ax = x1 + (double)(i - y1) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
+				tex_u = (1.0f - t) * tex_su + t * tex_eu;
+				tex_v = (1.0f - t) * tex_sv + t * tex_ev;
 
-				double tex_su = u1 + (double)(i - y1) * du1_step;
-				double tex_sv = v1 + (double)(i - y1) * dv1_step;
-				double tex_sw = w1 + (double)(i - y1) * dw1_step;
-
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
-				double tex_ew = w1 + (double)(i - y1) * dw2_step;
-
-				if (ax > bx)
-				{
-					std::swap(ax, bx);
-					std::swap(tex_su, tex_eu);
-					std::swap(tex_sv, tex_ev);
-					std::swap(tex_sw, tex_ew);
-				}
-
-				tex_u = tex_su;
-				tex_v = tex_sv;
-				tex_w = tex_sw;
-
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
-
-				for (int j = ax; j < bx; j++)
-				{
-					tex_u = (1.0f - t) * tex_su + t * tex_eu;
-					tex_v = (1.0f - t) * tex_sv + t * tex_ev;
-					tex_w = (1.0f - t) * tex_sw + t * tex_ew;
-					if (tex_w > m_DepthBuffer[i * pge->ScreenWidth() + j])
-					{
-						pge->Draw(j, i, spr->Sample(tex_u, tex_v));
-						m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_w;
-					}
-					t += tstep;
-				}
+				pge->Draw(j, i, spr->Sample(tex_u, tex_v));
+				t += tstep;
 			}
 		}
 	}
@@ -748,7 +677,6 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 	dx1 = x3 - x2;
 	dv1 = v3 - v2;
 	du1 = u3 - u2;
-	dw1 = w3 - w2;
 
 	if (dy1)
 		dax_step = dx1 / (double)abs(dy1);
@@ -760,8 +688,6 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		du1_step = du1 / (double)abs(dy1);
 	if (dy1)
 		dv1_step = dv1 / (double)abs(dy1);
-	if (dy1)
-		dw1_step = dw1 / (double)abs(dy1);
 
 	if (dy1)
 	{
@@ -772,23 +698,19 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 
 			double tex_su = u2 + (double)(i - y2) * du1_step;
 			double tex_sv = v2 + (double)(i - y2) * dv1_step;
-			double tex_sw = w2 + (double)(i - y2) * dw1_step;
 
 			double tex_eu = u1 + (double)(i - y1) * du2_step;
 			double tex_ev = v1 + (double)(i - y1) * dv2_step;
-			double tex_ew = w1 + (double)(i - y1) * dw2_step;
 
 			if (ax > bx)
 			{
 				std::swap(ax, bx);
 				std::swap(tex_su, tex_eu);
 				std::swap(tex_sv, tex_ev);
-				std::swap(tex_sw, tex_ew);
 			}
 
 			tex_u = tex_su;
 			tex_v = tex_sv;
-			tex_w = tex_sw;
 
 			double tstep = 1.0f / ((double)(bx - ax));
 			double t = 0.0f;
@@ -797,18 +719,14 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 			{
 				tex_u = (1.0f - t) * tex_su + t * tex_eu;
 				tex_v = (1.0f - t) * tex_sv + t * tex_ev;
-				tex_w = (1.0f - t) * tex_sw + t * tex_ew;
 
-				if (tex_w > m_DepthBuffer[i * pge->ScreenWidth() + j])
-				{
-					pge->Draw(j, i, spr->Sample(tex_u / tex_w, tex_v / tex_w));
-					m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_w;
-				}
+				pge->Draw(j, i, spr->Sample(tex_u, tex_v));
+
 				t += tstep;
 			}
 		}
 	}
-}
+} // namespace JenovaSpace
 
 void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Sprite *spr)
 {
@@ -818,7 +736,6 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[0].x, tri.p[1].x);
 		std::swap(tri.t[0].x, tri.t[1].x);
 		std::swap(tri.t[0].y, tri.t[1].y);
-		std::swap(tri.t[0].z, tri.t[1].z);
 	}
 
 	if (tri.p[2].y < tri.p[0].y)
@@ -827,7 +744,6 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[0].x, tri.p[2].x);
 		std::swap(tri.t[0].x, tri.t[2].x);
 		std::swap(tri.t[0].y, tri.t[2].y);
-		std::swap(tri.t[0].z, tri.t[2].z);
 	}
 
 	if (tri.p[2].y < tri.p[1].y)
@@ -836,22 +752,19 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[1].x, tri.p[2].x);
 		std::swap(tri.t[1].x, tri.t[2].x);
 		std::swap(tri.t[1].y, tri.t[2].y);
-		std::swap(tri.t[1].z, tri.t[2].z);
 	}
 
 	int dy1 = tri.p[1].y - tri.p[0].y;
 	int dx1 = tri.p[1].x - tri.p[0].x;
 	double dv1 = tri.t[1].y - tri.t[0].y;
 	double du1 = tri.t[1].x - tri.t[0].x;
-	double dz1 = tri.t[1].z - tri.t[0].z;
 
 	int dy2 = tri.p[2].y - tri.p[0].y;
 	int dx2 = tri.p[2].x - tri.p[0].x;
 	double dv2 = tri.t[2].y - tri.t[0].y;
 	double du2 = tri.t[2].x - tri.t[0].x;
-	double dz2 = tri.t[2].z - tri.t[0].z;
 
-	double tex_x, tex_y, tex_z;
+	double tex_x, tex_y;
 
 	double du1_step = 0, dv1_step = 0, du2_step = 0, dv2_step = 0, dz1_step = 0, dz2_step = 0;
 	double dax_step = 0, dbx_step = 0;
@@ -865,15 +778,11 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		du1_step = du1 / (double)abs(dy1);
 	if (dy1)
 		dv1_step = dv1 / (double)abs(dy1);
-	if (dy1)
-		dz1_step = dz1 / (double)abs(dy1);
 
 	if (dy2)
 		du2_step = du2 / (double)abs(dy2);
 	if (dy2)
 		dv2_step = dv2 / (double)abs(dy2);
-	if (dy2)
-		dz2_step = dz2 / (double)abs(dy2);
 
 	if (dy1)
 	{
@@ -885,23 +794,19 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			// Start and end points in texture space
 			double tex_su = tri.t[0].x + (double)(i - tri.p[0].y) * du1_step;
 			double tex_sv = tri.t[0].y + (double)(i - tri.p[0].y) * dv1_step;
-			double tex_sz = tri.t[0].z + (double)(i - tri.p[0].y) * dz1_step;
 
 			double tex_eu = tri.t[0].x + (double)(i - tri.p[0].y) * du2_step;
 			double tex_ev = tri.t[0].y + (double)(i - tri.p[0].y) * dv2_step;
-			double tex_ez = tri.t[0].z + (double)(i - tri.p[0].y) * dz2_step;
 
 			if (ax > bx)
 			{
 				std::swap(ax, bx);
 				std::swap(tex_su, tex_eu);
 				std::swap(tex_sv, tex_ev);
-				std::swap(tex_sz, tex_ez);
 			}
 
 			tex_x = tex_su;
 			tex_y = tex_sv;
-			tex_z = tex_sz;
 
 			double tstep = 1.0f / ((double)(bx - ax));
 			double t = 0;
@@ -910,13 +815,9 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			{
 				tex_x = (1.0f - t) * tex_su + t * tex_eu;
 				tex_y = (1.0f - t) * tex_sv + t * tex_ev;
-				tex_z = (1.0f - t) * tex_sz + t * tex_ez;
 
-				if (tex_z > m_DepthBuffer[i * pge->ScreenWidth() + j])
-				{
-					pge->Draw(j, i, spr->Sample(tex_x / tex_z, tex_y / tex_z));
-					m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_z;
-				}
+				pge->Draw(j, i, spr->Sample(tex_x, tex_y));
+
 				t += tstep;
 			}
 		}
@@ -926,7 +827,6 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 	dx1 = tri.p[2].x - tri.p[1].x;
 	dv1 = tri.t[2].y - tri.t[1].y;
 	du1 = tri.t[2].x - tri.t[1].x;
-	dz1 = tri.t[2].z - tri.t[1].z;
 
 	if (dy1)
 		dax_step = dx1 / (double)abs(dy1);
@@ -938,8 +838,6 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		du1_step = du1 / (double)abs(dy1);
 	if (dy1)
 		dv1_step = dv1 / (double)abs(dy1);
-	if (dy1)
-		dz1_step = dz1 / (double)abs(dy1);
 
 	if (dy1)
 	{
@@ -951,23 +849,19 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			//start and end points in texture space
 			double tex_su = tri.t[1].x + (double)(i - tri.p[1].y) * du1_step;
 			double tex_sv = tri.t[1].y + (double)(i - tri.p[1].y) * dv1_step;
-			double tex_sz = tri.t[1].z + (double)(i - tri.p[1].y) * dz1_step;
 
 			double tex_eu = tri.t[0].x + (double)(i - tri.p[0].y) * du2_step;
 			double tex_ev = tri.t[0].y + (double)(i - tri.p[0].y) * dv2_step;
-			double tex_ez = tri.t[0].z + (double)(i - tri.p[0].y) * dz2_step;
 
 			if (ax > bx)
 			{
 				std::swap(ax, bx);
 				std::swap(tex_su, tex_eu);
 				std::swap(tex_sv, tex_ev);
-				std::swap(tex_sz, tex_ez);
 			}
 
 			tex_x = tex_su;
 			tex_y = tex_sv;
-			tex_z = tex_sz;
 
 			double tstep = 1.0f / ((double)(bx - ax));
 			double t = 0;
@@ -976,13 +870,8 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			{
 				tex_x = (1.0f - t) * tex_su + t * tex_eu;
 				tex_y = (1.0f - t) * tex_sv + t * tex_ev;
-				tex_z = (1.0f - t) * tex_sz + t * tex_ez;
 
-				if (tex_z > m_DepthBuffer[i * pge->ScreenWidth() + j])
-				{
-					pge->Draw(j, i, spr->Sample(tex_x / tex_z, tex_y / tex_z));
-					m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_z;
-				}
+				pge->Draw(j, i, spr->Sample(tex_x, tex_y));
 
 				t += tstep;
 			}
@@ -1052,9 +941,9 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &tria
 		GFX3D::Triangle triTransformed;
 
 		//just copy through texture coordinates
-		triTransformed.t[0] = {tri.t[0].x, tri.t[0].y, tri.t[0].z};
-		triTransformed.t[1] = {tri.t[1].x, tri.t[1].y, tri.t[1].z};
-		triTransformed.t[2] = {tri.t[2].x, tri.t[2].y, tri.t[2].z}; // Think!
+		triTransformed.t[0] = {tri.t[0].x, tri.t[0].y};
+		triTransformed.t[1] = {tri.t[1].x, tri.t[1].y};
+		triTransformed.t[2] = {tri.t[2].x, tri.t[2].y}; // Think!
 
 		//transform Triangle from object into projected space
 		triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
@@ -1115,10 +1004,12 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &tria
 				triProjected.t[0].y = triProjected.t[0].y / triProjected.p[0].w;
 				triProjected.t[1].y = triProjected.t[1].y / triProjected.p[1].w;
 				triProjected.t[2].y = triProjected.t[2].y / triProjected.p[2].w;
-
-				triProjected.t[0].z = 1.0f / triProjected.p[0].w;
-				triProjected.t[1].z = 1.0f / triProjected.p[1].w;
-				triProjected.t[2].z = 1.0f / triProjected.p[2].w;
+			}
+			else
+			{
+				triProjected.t[0] = clipped[n].t[0];
+				triProjected.t[1] = clipped[n].t[1];
+				triProjected.t[2] = clipped[n].t[2];
 			}
 			//clip against viewport in screen space
 			//clip triangles against all four screen edges, this could yield a bunch of triangles, so create a queue that we traverse to ensure we only test new triangles generated against planes
@@ -1167,13 +1058,13 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &tria
 			{
 				//scale to viewport
 				/*
-				triRaster.p[0].x *= -1.0f;
-				triRaster.p[1].x *= -1.0f;
-				triRaster.p[2].x *= -1.0f;
-				triRaster.p[0].y *= -1.0f;
-				triRaster.p[1].y *= -1.0f;
-				triRaster.p[2].y *= -1.0f;
-				*/
+					triRaster.p[0].x *= -1.0f;
+					triRaster.p[1].x *= -1.0f;
+					triRaster.p[2].x *= -1.0f;
+					triRaster.p[0].y *= -1.0f;
+					triRaster.p[1].y *= -1.0f;
+					triRaster.p[2].y *= -1.0f;
+					*/
 				Vector3D vOffsetView = {1, 1, 0};
 				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
 				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
@@ -1194,9 +1085,9 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &tria
 				if (flags & RENDER_TEXTURED)
 				{
 					TexturedTriangle(
-						triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
-						triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
-						triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
+						triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y,
+						triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y,
+						triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y,
 						sprTexture, true);
 				}
 
