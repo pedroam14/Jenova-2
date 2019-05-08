@@ -123,6 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\City_Roads1_mip0.png" />
+    <Image Include="Resources\MapSpriteSheet.png" />
+    <Image Include="Resources\TerraSpriteSheet.png" />
     <Image Include="Resources\tifa.png" />
     <Image Include="Resources\vivi.png" />
   </ItemGroup>

@@ -37,5 +37,11 @@
     <Image Include="Resources\vivi.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\MapSpriteSheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\TerraSpriteSheet.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
