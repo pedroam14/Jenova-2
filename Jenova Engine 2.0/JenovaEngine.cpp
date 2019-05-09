@@ -239,7 +239,7 @@ public:
 		// Also make a projection matrix, we might need this later
 		matProj = JenovaSpace::GFX3D::Math::Mat_MakeProjection(90.0f, (double)ScreenHeight() / (double)ScreenWidth(), 0.1f, 1000.0f);
 	
-		LoadCity("example1.city");
+		//LoadCity("example1.city");
 
 		// Ok, lets go!
 		return true;
@@ -485,15 +485,15 @@ public:
 					if (r(0, -1) && !r(0, +1) && r(-1, 0) && r(+1, 0)) road = 10;
 					if (r(0, -1) && !r(0, +1) && r(-1, 0) && !r(+1, 0)) road = 11;
 
-					// Create a translation transform to position the cell in the world
+					//create a translation transform to position the cell in the world
 					JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, 0.0f);
 					pipeRender.SetTransform(matWorld);
 
-					// Set the appropriate texture to use
+					//set the appropriate texture to use
 					pipeRender.SetTexture(sprRoad[road]);
 
-					// Draw a flat quad
-					pipeRender.Render(meshFlat.triangles,true);
+					//draw a flat quad
+					pipeRender.Render(meshFlat.triangles, false);
 
 				}
 				else // Not Road
@@ -511,7 +511,7 @@ public:
 						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, 0.0f);
 						pipeRender.SetTransform(matWorld);
 						pipeRender.SetTexture(sprGround);
-						pipeRender.Render(meshFlat.triangles, true);
+						pipeRender.Render(meshFlat.triangles, false);
 					}
 
 					if (pMap[y*nMapWidth + x].nHeight > 0)
@@ -528,14 +528,14 @@ public:
 
 							// Choose a texture, if its ground level, use the "street level front", otherwise use windows
 							pipeRender.SetTexture(h == 0 ? sprFrontage : sprWindows);
-							pipeRender.Render(meshWallsOut.triangles);
+							pipeRender.Render(meshWallsOut.triangles, false);
 						}
 
 						// Top the building off with a roof
 						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, -(h) * 0.2f);
 						pipeRender.SetTransform(matWorld);
 						pipeRender.SetTexture(sprRoof);
-						pipeRender.Render(meshFlat.triangles);
+						pipeRender.Render(meshFlat.triangles, false);
 					}
 				}
 			}
@@ -549,7 +549,7 @@ public:
 			JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(cell->nWorldX, cell->nWorldY, 0.0f);
 			pipeRender.SetTransform(matWorld);
 			pipeRender.SetTexture(sprRoof);
-			pipeRender.Render(meshFlat.triangles, JenovaSpace::GFX3D::RENDER_WIRE);
+			pipeRender.Render(meshFlat.triangles, JenovaSpace::GFX3D::RENDER_WIRE, false);
 		}
 
 		// Draw Car, a few transforms required for this
@@ -575,7 +575,7 @@ public:
 		// The car has transparency, so enable it
 		SetPixelMode(JenovaSpace::Pixel::ALPHA);
 		// Render the quad
-		pipeRender.Render(meshFlat.triangles);
+		pipeRender.Render(meshFlat.triangles, false);
 		// Set transparency back to none to optimise drawing other pixels
 		SetPixelMode(JenovaSpace::Pixel::NORMAL);
 
@@ -589,7 +589,7 @@ public:
 int main()
 {
 	MapEditor demo;
-	if (demo.Construct(768, 480, 1, 1))
+	if (demo.Construct(768, 480, 2, 2))
 	{
 		demo.Start();
 	}
