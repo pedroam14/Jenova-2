@@ -70,7 +70,7 @@ namespace JenovaSpace
 		enum Mode { NORMAL, MASK, ALPHA, CUSTOM };
 	};
 
-	//Some constants for symbolic naming of Pixels
+	//some constants for symbolic naming of Pixels
 	static const Pixel
 		WHITE(255, 255, 255),
 		GREY(192, 192, 192), DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
@@ -90,8 +90,7 @@ namespace JenovaSpace
 		NO_FILE = -1,
 	};
 
-	//==================================================================================
-
+	
 	template <class T>
 	struct v2d_generic
 	{
@@ -128,16 +127,13 @@ namespace JenovaSpace
 	typedef v2d_generic<double> vf2d;
 	typedef v2d_generic<double> vd2d;
 
-	//=============================================================
 
 	struct HWButton
 	{
-		bool bPressed = false;	//Set once during the frame the event occurs
-		bool bReleased = false;	//Set once during the frame the event occurs
-		bool bHeld = false;		//Set true for all frames between pressed and released events
+		bool bPressed = false;	//set once during the frame the event occurs
+		bool bReleased = false;	//set once during the frame the event occurs
+		bool bHeld = false;		//set true for all frames between pressed and released events
 	};
-
-	//=============================================================
 
 
 	class ResourcePack
@@ -165,9 +161,7 @@ namespace JenovaSpace
 		std::map<std::string, sEntry> mapFiles;
 	};
 
-	//=============================================================
-
-	//A bitmap-like structure that stores a 2D array of Pixels
+	//a bitmap-like structure that stores a 2D array of Pixels
 	class Sprite
 	{
 	public:
@@ -207,7 +201,6 @@ namespace JenovaSpace
 
 	};
 
-	//=============================================================
 
 	enum Key
 	{
@@ -223,8 +216,6 @@ namespace JenovaSpace
 	};
 
 
-	//=============================================================
-
 	class JenovaPixel
 	{
 	public:
@@ -234,87 +225,87 @@ namespace JenovaSpace
 		JenovaSpace::rcode	Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen = false);
 		JenovaSpace::rcode	Start();
 
-	public: //Override Interfaces
-		//Called once on application startup, use to load your resources
+	public: //override Interfaces
+		//called once on application startup, use to load your resources
 		virtual bool OnUserCreate();
-		//Called every frame, and provides you with a time per frame value
+		//called every frame, and provides you with a time per frame value
 		virtual bool OnUserUpdate(double fElapsedTime);
-		//Called once on application termination, so you can be a clean coder
+		//called once on application termination, so you can be a clean coder
 		virtual bool OnUserDestroy();
 
-	public: //Hardware Interfaces
-		//Returns true if window is currently in focus
+	public: //hardware Interfaces
+		//returns true if window is currently in focus
 		bool IsFocused();
-		//Get the state of a specific keyboard button
+		//get the state of a specific keyboard button
 		HWButton GetKey(Key k);
-		//Get the state of a specific mouse button
+		//get the state of a specific mouse button
 		HWButton GetMouse(uint32_t b);
-		//Get Mouse X coordinate in "pixel" space
+		//get Mouse X coordinate in "pixel" space
 		int32_t GetMouseX();
-		//Get Mouse Y coordinate in "pixel" space
+		//get Mouse Y coordinate in "pixel" space
 		int32_t GetMouseY();
-		//Get Mouse Wheel Delta
+		//get Mouse Wheel Delta
 		int32_t GetMouseWheel();
 
-	public: //Utility
-		//Returns the width of the screen in "pixels"
+	public: //utility
+		//returns the width of the screen in "pixels"
 		int32_t ScreenWidth();
-		//Returns the height of the screen in "pixels"
+		//returns the height of the screen in "pixels"
 		int32_t ScreenHeight();
-		//Returns the width of the currently selected drawing target in "pixels"
+		//returns the width of the currently selected drawing target in "pixels"
 		int32_t GetDrawTargetWidth();
-		//Returns the height of the currently selected drawing target in "pixels"
+		//returns the height of the currently selected drawing target in "pixels"
 		int32_t GetDrawTargetHeight();
-		//Returns the currently active draw target
+		//returns the currently active draw target
 		Sprite* GetDrawTarget();
 
-	public: //Draw Routines
-		//Specify which Sprite should be the target of drawing functions, use nullptr
+	public: //draw Routines
+		//specify which Sprite should be the target of drawing functions, use nullptr
 		//to specify the primary screen
 		void SetDrawTarget(Sprite *target);
-		//Change the pixel mode for different optimisations
-		//JenovaSpace::Pixel::NORMAL = No transparency
-		//JenovaSpace::Pixel::MASK   = Transparent if alpha is < 255
-		//JenovaSpace::Pixel::ALPHA  = Full transparency
+		//change the pixel mode for different optimisations
+		//jenovaSpace::Pixel::NORMAL = No transparency
+		//jenovaSpace::Pixel::MASK   = Transparent if alpha is < 255
+		//jenovaSpace::Pixel::ALPHA  = Full transparency
 		void SetPixelMode(Pixel::Mode m);
 		Pixel::Mode GetPixelMode();
-		//Use a custom blend function
+		//use a custom blend function
 		void SetPixelMode(std::function<JenovaSpace::Pixel(const int x, const int y, const JenovaSpace::Pixel& pSource, const JenovaSpace::Pixel& pDest)> pixelMode);
-		//Change the blend factor form between 0.0f to 1.0f;
+		//change the blend factor form between 0.0f to 1.0f;
 		void SetPixelBlend(double fBlend);
-		//Offset texels by sub-pixel amount (advanced, do not use)
+		//offset texels by sub-pixel amount (advanced, do not use)
 		void SetSubPixelOffset(double ox, double oy);
 
-		//Draws a single Pixel
+		//draws a single Pixel
 		virtual bool Draw(int32_t x, int32_t y, Pixel p = JenovaSpace::WHITE);
-		//Draws a line from (x1,y1) to (x2,y2)
+		//draws a line from (x1,y1) to (x2,y2)
 		void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, Pixel p = JenovaSpace::WHITE, uint32_t pattern = 0xFFFFFFFF);
-		//Draws a circle located at (x,y) with radius
+		//draws a circle located at (x,y) with radius
 		void DrawCircle(int32_t x, int32_t y, int32_t radius, Pixel p = JenovaSpace::WHITE, uint8_t mask = 0xFF);
-		//Fills a circle located at (x,y) with radius
+		//fills a circle located at (x,y) with radius
 		void FillCircle(int32_t x, int32_t y, int32_t radius, Pixel p = JenovaSpace::WHITE);
-		//Draws a rectangle at (x,y) to (x+w,y+h)
+		//draws a rectangle at (x,y) to (x+w,y+h)
 		void DrawRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = JenovaSpace::WHITE);
-		//Fills a rectangle at (x,y) to (x+w,y+h)
+		//fills a rectangle at (x,y) to (x+w,y+h)
 		void FillRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = JenovaSpace::WHITE);
-		//Draws a triangle between points (x1,y1), (x2,y2) and (x3,y3)
+		//draws a triangle between points (x1,y1), (x2,y2) and (x3,y3)
 		void DrawTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = JenovaSpace::WHITE);
-		//Flat fills a triangle between points (x1,y1), (x2,y2) and (x3,y3)
+		//flat fills a triangle between points (x1,y1), (x2,y2) and (x3,y3)
 		void FillTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = JenovaSpace::WHITE);
-		//Draws an entire sprite at location (x,y)
+		//draws an entire sprite at location (x,y)
 		void DrawSprite(int32_t x, int32_t y, Sprite *sprite, uint32_t scale = 1);
-		//Draws an area of a sprite at location (x,y), where the
+		//draws an area of a sprite at location (x,y), where the
 		//selected area is (ox,oy) to (ox+w,oy+h)
 		void DrawPartialSprite(int32_t x, int32_t y, Sprite *sprite, int32_t ox, int32_t oy, int32_t w, int32_t h, uint32_t scale = 1);
-		//Draws a single line of text
+		//draws a single line of text
 		void DrawString(int32_t x, int32_t y, std::string sText, Pixel col = JenovaSpace::WHITE, uint32_t scale = 1);
-		//Clears entire draw target to Pixel
+		//clears entire draw target to Pixel
 		void Clear(Pixel p);
 
-	public: //Branding
+	public: //branding
 		std::string sAppName;
 
-	private: //Inner mysterious workings
+	private: //inner mysterious workings
 		Sprite		*pDefaultDrawTarget = nullptr;
 		Sprite		*pDrawTarget = nullptr;
 		Pixel::Mode	nPixelMode = Pixel::NORMAL;
@@ -367,34 +358,34 @@ namespace JenovaSpace
 
 		void		EngineThread();
 
-		//If anything sets this flag to false, the engine
+		//if anything sets this flag to false, the engine
 		//"should" shut down gracefully
 		static std::atomic<bool> bAtomActive;
 
-		//Common initialisation functions
-		void olc_UpdateMouse(int32_t x, int32_t y);
-		void olc_UpdateMouseWheel(int32_t delta);
-		void olc_UpdateWindowSize(int32_t x, int32_t y);
-		void olc_UpdateViewport();
-		bool olc_OpenGLCreate();
-		void olc_ConstructFontSheet();
+		//common initialisation functions
+		void Jenova_UpdateMouse(int32_t x, int32_t y);
+		void Jenova_UpdateMouseWheel(int32_t delta);
+		void Jenova_UpdateWindowSize(int32_t x, int32_t y);
+		void Jenova_UpdateViewport();
+		bool Jenova_OpenGLCreate();
+		void Jenova_ConstructFontSheet();
 
 
 #ifdef _WIN32
-		//Windows specific window handling
-		HWND olc_hWnd = nullptr;
-		HWND olc_WindowCreate();
+		//windows specific window handling
+		HWND Jenova_hWnd = nullptr;
+		HWND Jenova_WindowCreate();
 		std::wstring wsAppName;
-		static LRESULT CALLBACK olc_WindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK Jenova_WindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #else
 		//Non-Windows specific window handling
-		Display*				olc_Display = nullptr;
-		Window					olc_WindowRoot;
-		Window					olc_Window;
-		XVisualInfo*            olc_VisualInfo;
-		Colormap                olc_ColourMap;
-		XSetWindowAttributes    olc_SetWindowAttribs;
-		Display*				olc_WindowCreate();
+		Display*				Jenova_Display = nullptr;
+		Window					Jenova_WindowRoot;
+		Window					Jenova_Window;
+		XVisualInfo*            Jenova_VisualInfo;
+		Colormap                Jenova_ColourMap;
+		XSetWindowAttributes    Jenova_SetWindowAttribs;
+		Display*				Jenova_WindowCreate();
 #endif
 
 	};
@@ -412,26 +403,6 @@ namespace JenovaSpace
 
 #endif //OLC_PGE_DEF
 
-
-
-
-/*
-	Object Oriented Mode
-	~~~~~~~~~~~~~~~~~~~~
-
-	If the olcJenovaPixel.h is called from several sources it can cause
-	multiple definitions of objects. To prevent this, ONLY ONE of the pathways
-	to including this file must have OLC_PGE_APPLICATION defined before it. This prevents
-	the definitions being duplicated.
-
-	If all else fails, create a file called "olcJenovaPixel.cpp" with the following
-	two lines. Then you can just #include "olcJenovaPixel.h" as normal without worrying
-	about defining things. Dont forget to include that cpp file as part of your build!
-
-	#define OLC_PGE_APPLICATION
-	#include "olcJenovaPixel.h"
-
-*/
 
 #ifdef OLC_PGE_APPLICATION
 #undef OLC_PGE_APPLICATION
@@ -512,7 +483,7 @@ namespace JenovaSpace
 			is.read((char*)pColData, width * height * sizeof(uint32_t));
 		};
 
-		//These are essentially Memory Surfaces represented by JenovaSpace::Sprite
+		//these are essentially Memory Surfaces represented by JenovaSpace::Sprite
 		//which load very fast, but are completely uncompressed
 		if (pack == nullptr)
 		{
@@ -715,7 +686,7 @@ namespace JenovaSpace
 		u = u * width - 0.5f;
 		v = v * height - 0.5f;
 		int x = (int)floor(u); //cast to int rounds toward zero, not downward
-		int y = (int)floor(v); //Thanks @joshinils
+		int y = (int)floor(v); 
 		double u_ratio = u - x;
 		double v_ratio = v - y;
 		double u_opposite = 1 - u_ratio;
@@ -751,24 +722,24 @@ namespace JenovaSpace
 		std::ifstream ifs(sFile, std::ifstream::binary);
 		if (!ifs.is_open()) return JenovaSpace::FAIL;
 
-		//Get File Size
+		//get File Size
 		std::streampos p = 0;
 		p = ifs.tellg();
 		ifs.seekg(0, std::ios::end);
 		p = ifs.tellg() - p;
 		ifs.seekg(0, std::ios::beg);
 
-		//Create entry
+		//create entry
 		sEntry e;
 		e.data = nullptr;
 		e.nFileSize = (uint32_t)p;
 
-		//Read file into memory
+		//read file into memory
 		e.data = new uint8_t[(uint32_t)e.nFileSize];
 		ifs.read((char*)e.data, e.nFileSize);
 		ifs.close();
 
-		//Add To Map
+		//add To Map
 		mapFiles[sFile] = e;
 		return JenovaSpace::OK;
 	}
@@ -822,7 +793,7 @@ namespace JenovaSpace
 		std::ifstream ifs(sFile, std::ifstream::binary);
 		if (!ifs.is_open()) return JenovaSpace::FAIL;
 
-		//1) Read Map
+		//1) read Map
 		size_t nMapEntries;
 		ifs.read((char*)&nMapEntries, sizeof(size_t));
 		for (size_t i = 0; i < nMapEntries; i++)
@@ -902,7 +873,7 @@ namespace JenovaSpace
 #endif
 #endif
 		//Load the default font sheet
-		olc_ConstructFontSheet();
+		Jenova_ConstructFontSheet();
 
 		//Create a sprite that represents the primary drawing target
 		pDefaultDrawTarget = new Sprite(nScreenWidth, nScreenHeight);
@@ -913,7 +884,7 @@ namespace JenovaSpace
 	JenovaSpace::rcode JenovaPixel::Start()
 	{
 		//Construct the window
-		if (!olc_WindowCreate())
+		if (!Jenova_WindowCreate())
 			return JenovaSpace::FAIL;
 
 		//Load libraries required for PNG file interaction
@@ -1494,7 +1465,7 @@ namespace JenovaSpace
 	}
 	//////////////////////////////////////////////////////////////////
 
-	void JenovaPixel::olc_UpdateViewport()
+	void JenovaPixel::Jenova_UpdateViewport()
 	{
 		int32_t ww = nScreenWidth * nPixelWidth;
 		int32_t wh = nScreenHeight * nPixelHeight;
@@ -1513,20 +1484,20 @@ namespace JenovaSpace
 		nViewY = (nWindowHeight - nViewH) / 2;
 	}
 
-	void JenovaPixel::olc_UpdateWindowSize(int32_t x, int32_t y)
+	void JenovaPixel::Jenova_UpdateWindowSize(int32_t x, int32_t y)
 	{
 		nWindowWidth = x;
 		nWindowHeight = y;
-		olc_UpdateViewport();
+		Jenova_UpdateViewport();
 
 	}
 
-	void JenovaPixel::olc_UpdateMouseWheel(int32_t delta)
+	void JenovaPixel::Jenova_UpdateMouseWheel(int32_t delta)
 	{
 		nMouseWheelDeltaCache += delta;
 	}
 
-	void JenovaPixel::olc_UpdateMouse(int32_t x, int32_t y)
+	void JenovaPixel::Jenova_UpdateMouse(int32_t x, int32_t y)
 	{
 		//Mouse coords come in screen space
 		//But leave in pixel space
@@ -1555,7 +1526,7 @@ namespace JenovaSpace
 	void JenovaPixel::EngineThread()
 	{
 		//Start OpenGL, the context is owned by the game thread
-		olc_OpenGLCreate();
+		Jenova_OpenGLCreate();
 
 		//Create Screen Texture - disable filtering
 		glEnable(GL_TEXTURE_2D);
@@ -1593,16 +1564,16 @@ namespace JenovaSpace
 				//same thread that OpenGL was created so we dont
 				//need to worry too much about multithreading with X11
 				XEvent xev;
-				while (XPending(olc_Display))
+				while (XPending(Jenova_Display))
 				{
-					XNextEvent(olc_Display, &xev);
+					XNextEvent(Jenova_Display, &xev);
 					if (xev.type == Expose)
 					{
 						XWindowAttributes gwa;
-						XGetWindowAttributes(olc_Display, olc_Window, &gwa);
+						XGetWindowAttributes(Jenova_Display, Jenova_Window, &gwa);
 						nWindowWidth = gwa.width;
 						nWindowHeight = gwa.height;
-						olc_UpdateViewport();
+						Jenova_UpdateViewport();
 						glClear(GL_COLOR_BUFFER_BIT); //Thanks Benedani!
 					}
 					else if (xev.type == ConfigureNotify)
@@ -1634,8 +1605,8 @@ namespace JenovaSpace
 						case 1:	pMouseNewState[0] = true; break;
 						case 2:	pMouseNewState[2] = true; break;
 						case 3:	pMouseNewState[1] = true; break;
-						case 4:	olc_UpdateMouseWheel(120); break;
-						case 5:	olc_UpdateMouseWheel(-120); break;
+						case 4:	Jenova_UpdateMouseWheel(120); break;
+						case 5:	Jenova_UpdateMouseWheel(-120); break;
 						default: break;
 						}
 					}
@@ -1651,7 +1622,7 @@ namespace JenovaSpace
 					}
 					else if (xev.type == MotionNotify)
 					{
-						olc_UpdateMouse(xev.xmotion.x, xev.xmotion.y);
+						Jenova_UpdateMouse(xev.xmotion.x, xev.xmotion.y);
 					}
 					else if (xev.type == FocusIn)
 					{
@@ -1749,7 +1720,7 @@ namespace JenovaSpace
 #ifdef _WIN32
 				SwapBuffers(glDeviceContext);
 #else
-				glXSwapBuffers(olc_Display, olc_Window);
+				glXSwapBuffers(Jenova_Display, Jenova_Window);
 #endif
 
 				//Update Title Bar
@@ -1762,12 +1733,12 @@ namespace JenovaSpace
 					std::string sTitle = "Jenova Engine - " + sAppName + " - FPS: " + std::to_string(nFrameCount);
 #ifdef _WIN32
 #ifdef UNICODE
-					SetWindowText(olc_hWnd, ConvertS2W(sTitle).c_str());
+					SetWindowText(Jenova_hWnd, ConvertS2W(sTitle).c_str());
 #else
-					SetWindowText(olc_hWnd, sTitle.c_str());
+					SetWindowText(Jenova_hWnd, sTitle.c_str());
 #endif
 #else					
-					XStoreName(olc_Display, olc_Window, sTitle.c_str());
+					XStoreName(Jenova_Display, Jenova_Window, sTitle.c_str());
 #endif
 					nFrameCount = 0;
 				}
@@ -1787,12 +1758,12 @@ namespace JenovaSpace
 
 #ifdef _WIN32
 		wglDeleteContext(glRenderContext);
-		PostMessage(olc_hWnd, WM_DESTROY, 0, 0);
+		PostMessage(Jenova_hWnd, WM_DESTROY, 0, 0);
 #else
-		glXMakeCurrent(olc_Display, None, NULL);
-		glXDestroyContext(olc_Display, glDeviceContext);
-		XDestroyWindow(olc_Display, olc_Window);
-		XCloseDisplay(olc_Display);
+		glXMakeCurrent(Jenova_Display, None, NULL);
+		glXDestroyContext(Jenova_Display, glDeviceContext);
+		XDestroyWindow(Jenova_Display, Jenova_Window);
+		XCloseDisplay(Jenova_Display);
 #endif
 
 	}
@@ -1813,7 +1784,7 @@ namespace JenovaSpace
 #endif
 
 
-	void JenovaPixel::olc_ConstructFontSheet()
+	void JenovaPixel::Jenova_ConstructFontSheet()
 	{
 		std::string data;
 		data += "?Q`0001oOch0o01o@F40o0<AGD4090LAGD<090@A7ch0?00O7Q`0600>00000000";
@@ -1853,14 +1824,14 @@ namespace JenovaSpace
 	}
 
 #ifdef _WIN32
-	HWND JenovaPixel::olc_WindowCreate()
+	HWND JenovaPixel::Jenova_WindowCreate()
 	{
 		WNDCLASS wc;
 		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 		wc.hInstance = GetModuleHandle(nullptr);
-		wc.lpfnWndProc = olc_WindowEvent;
+		wc.lpfnWndProc = Jenova_WindowEvent;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.lpszMenuName = nullptr;
@@ -1890,7 +1861,7 @@ namespace JenovaSpace
 			dwExStyle = 0;
 			dwStyle = WS_VISIBLE | WS_POPUP;
 			nCosmeticOffset = 0;
-			HMONITOR hmon = MonitorFromWindow(olc_hWnd, MONITOR_DEFAULTTONEAREST);
+			HMONITOR hmon = MonitorFromWindow(Jenova_hWnd, MONITOR_DEFAULTTONEAREST);
 			MONITORINFO mi = { sizeof(mi) };
 			if (!GetMonitorInfo(hmon, &mi)) return NULL;
 			nWindowWidth = mi.rcMonitor.right;
@@ -1899,7 +1870,7 @@ namespace JenovaSpace
 
 		}
 
-		olc_UpdateViewport();
+		Jenova_UpdateViewport();
 
 		//Keep client size as requested
 		RECT rWndRect = { 0, 0, nWindowWidth, nWindowHeight };
@@ -1908,10 +1879,10 @@ namespace JenovaSpace
 		int height = rWndRect.bottom - rWndRect.top;
 
 #ifdef UNICODE
-		olc_hWnd = CreateWindowEx(dwExStyle, L"OLC_PIXEL_GAME_ENGINE", L"", dwStyle,
+		Jenova_hWnd = CreateWindowEx(dwExStyle, L"OLC_PIXEL_GAME_ENGINE", L"", dwStyle,
 			nCosmeticOffset, nCosmeticOffset, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
 #else
-		olc_hWnd = CreateWindowEx(dwExStyle, "OLC_PIXEL_GAME_ENGINE", "", dwStyle,
+		Jenova_hWnd = CreateWindowEx(dwExStyle, "OLC_PIXEL_GAME_ENGINE", "", dwStyle,
 			nCosmeticOffset, nCosmeticOffset, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
 #endif
 
@@ -1944,13 +1915,13 @@ namespace JenovaSpace
 		mapKeys[VK_NUMPAD5] = Key::NP5; mapKeys[VK_NUMPAD6] = Key::NP6; mapKeys[VK_NUMPAD7] = Key::NP7; mapKeys[VK_NUMPAD8] = Key::NP8; mapKeys[VK_NUMPAD9] = Key::NP9;
 		mapKeys[VK_MULTIPLY] = Key::NP_MUL; mapKeys[VK_ADD] = Key::NP_ADD; mapKeys[VK_DIVIDE] = Key::NP_DIV; mapKeys[VK_SUBTRACT] = Key::NP_SUB; mapKeys[VK_DECIMAL] = Key::NP_DECIMAL;
 
-		return olc_hWnd;
+		return Jenova_hWnd;
 	}
 
-	bool JenovaPixel::olc_OpenGLCreate()
+	bool JenovaPixel::Jenova_OpenGLCreate()
 	{
 		//Create Device Context
-		glDeviceContext = GetDC(olc_hWnd);
+		glDeviceContext = GetDC(Jenova_hWnd);
 		PIXELFORMATDESCRIPTOR pfd =
 		{
 			sizeof(PIXELFORMATDESCRIPTOR), 1,
@@ -1975,7 +1946,7 @@ namespace JenovaSpace
 	}
 
 	//Windows Event Handler
-	LRESULT CALLBACK JenovaPixel::olc_WindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK JenovaPixel::Jenova_WindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		static JenovaPixel *sge;
 		switch (uMsg)
@@ -1987,17 +1958,17 @@ namespace JenovaSpace
 			uint16_t y = (lParam >> 16) & 0xFFFF;
 			int16_t ix = *(int16_t*)&x;
 			int16_t iy = *(int16_t*)&y;
-			sge->olc_UpdateMouse(ix, iy);
+			sge->Jenova_UpdateMouse(ix, iy);
 			return 0;
 		}
 		case WM_SIZE:
 		{
-			sge->olc_UpdateWindowSize(lParam & 0xFFFF, (lParam >> 16) & 0xFFFF);
+			sge->Jenova_UpdateWindowSize(lParam & 0xFFFF, (lParam >> 16) & 0xFFFF);
 			return 0;
 		}
 		case WM_MOUSEWHEEL:
 		{
-			sge->olc_UpdateMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam));
+			sge->Jenova_UpdateMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam));
 			return 0;
 		}
 		case WM_MOUSELEAVE: sge->bHasMouseFocus = false;							return 0;
@@ -2018,56 +1989,56 @@ namespace JenovaSpace
 	}
 #else
 	//Do the Linux stuff!
-	Display* JenovaPixel::olc_WindowCreate()
+	Display* JenovaPixel::Jenova_WindowCreate()
 	{
 		XInitThreads();
 
 		//Grab the deafult display and window
-		olc_Display = XOpenDisplay(NULL);
-		olc_WindowRoot = DefaultRootWindow(olc_Display);
+		Jenova_Display = XOpenDisplay(NULL);
+		Jenova_WindowRoot = DefaultRootWindow(Jenova_Display);
 
 		//Based on the display capabilities, configure the appearance of the window
-		GLint olc_GLAttribs[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-		olc_VisualInfo = glXChooseVisual(olc_Display, 0, olc_GLAttribs);
-		olc_ColourMap = XCreateColormap(olc_Display, olc_WindowRoot, olc_VisualInfo->visual, AllocNone);
-		olc_SetWindowAttribs.colormap = olc_ColourMap;
+		GLint Jenova_GLAttribs[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+		Jenova_VisualInfo = glXChooseVisual(Jenova_Display, 0, Jenova_GLAttribs);
+		Jenova_ColourMap = XCreateColormap(Jenova_Display, Jenova_WindowRoot, Jenova_VisualInfo->visual, AllocNone);
+		Jenova_SetWindowAttribs.colormap = Jenova_ColourMap;
 
 		//Register which events we are interested in receiving
-		olc_SetWindowAttribs.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | StructureNotifyMask;
+		Jenova_SetWindowAttribs.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | StructureNotifyMask;
 
 		//Create the window
-		olc_Window = XCreateWindow(olc_Display, olc_WindowRoot, 30, 30, nScreenWidth * nPixelWidth, nScreenHeight * nPixelHeight, 0, olc_VisualInfo->depth, InputOutput, olc_VisualInfo->visual, CWColormap | CWEventMask, &olc_SetWindowAttribs);
+		Jenova_Window = XCreateWindow(Jenova_Display, Jenova_WindowRoot, 30, 30, nScreenWidth * nPixelWidth, nScreenHeight * nPixelHeight, 0, Jenova_VisualInfo->depth, InputOutput, Jenova_VisualInfo->visual, CWColormap | CWEventMask, &Jenova_SetWindowAttribs);
 
-		Atom wmDelete = XInternAtom(olc_Display, "WM_DELETE_WINDOW", true);
-		XSetWMProtocols(olc_Display, olc_Window, &wmDelete, 1);
+		Atom wmDelete = XInternAtom(Jenova_Display, "WM_DELETE_WINDOW", true);
+		XSetWMProtocols(Jenova_Display, Jenova_Window, &wmDelete, 1);
 
-		XMapWindow(olc_Display, olc_Window);
-		XStoreName(olc_Display, olc_Window, "OneLoneCoder.com - Pixel Game Engine");
+		XMapWindow(Jenova_Display, Jenova_Window);
+		XStoreName(Jenova_Display, Jenova_Window, "OneLoneCoder.com - Pixel Game Engine");
 
 		if (bFullScreen) //Thanks DragonEye, again :D
 		{
 			Atom wm_state;
 			Atom fullscreen;
-			wm_state = XInternAtom(olc_Display, "_NET_WM_STATE", False);
-			fullscreen = XInternAtom(olc_Display, "_NET_WM_STATE_FULLSCREEN", False);
+			wm_state = XInternAtom(Jenova_Display, "_NET_WM_STATE", False);
+			fullscreen = XInternAtom(Jenova_Display, "_NET_WM_STATE_FULLSCREEN", False);
 			XEvent xev{ 0 };
 			xev.type = ClientMessage;
-			xev.xclient.window = olc_Window;
+			xev.xclient.window = Jenova_Window;
 			xev.xclient.message_type = wm_state;
 			xev.xclient.format = 32;
 			xev.xclient.data.l[0] = (bFullScreen ? 1 : 0);   //the action (0: off, 1: on, 2: toggle)
 			xev.xclient.data.l[1] = fullscreen;             //first property to alter
 			xev.xclient.data.l[2] = 0;                      //second property to alter
 			xev.xclient.data.l[3] = 0;                      //source indication
-			XMapWindow(olc_Display, olc_Window);
-			XSendEvent(olc_Display, DefaultRootWindow(olc_Display), False,
+			XMapWindow(Jenova_Display, Jenova_Window);
+			XSendEvent(Jenova_Display, DefaultRootWindow(Jenova_Display), False,
 				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-			XFlush(olc_Display);
+			XFlush(Jenova_Display);
 			XWindowAttributes gwa;
-			XGetWindowAttributes(olc_Display, olc_Window, &gwa);
+			XGetWindowAttributes(Jenova_Display, Jenova_Window, &gwa);
 			nWindowWidth = gwa.width;
 			nWindowHeight = gwa.height;
-			olc_UpdateViewport();
+			Jenova_UpdateViewport();
 		}
 
 		//Create Keyboard Mapping
@@ -2099,22 +2070,22 @@ namespace JenovaSpace
 		mapKeys[XK_KP_5] = Key::NP5; mapKeys[XK_KP_6] = Key::NP6; mapKeys[XK_KP_7] = Key::NP7; mapKeys[XK_KP_8] = Key::NP8; mapKeys[XK_KP_9] = Key::NP9;
 		mapKeys[XK_KP_Multiply] = Key::NP_MUL; mapKeys[XK_KP_Add] = Key::NP_ADD; mapKeys[XK_KP_Divide] = Key::NP_DIV; mapKeys[XK_KP_Subtract] = Key::NP_SUB; mapKeys[XK_KP_Decimal] = Key::NP_DECIMAL;
 
-		return olc_Display;
+		return Jenova_Display;
 	}
 
-	bool JenovaPixel::olc_OpenGLCreate()
+	bool JenovaPixel::Jenova_OpenGLCreate()
 	{
-		glDeviceContext = glXCreateContext(olc_Display, olc_VisualInfo, nullptr, GL_TRUE);
-		glXMakeCurrent(olc_Display, olc_Window, glDeviceContext);
+		glDeviceContext = glXCreateContext(Jenova_Display, Jenova_VisualInfo, nullptr, GL_TRUE);
+		glXMakeCurrent(Jenova_Display, Jenova_Window, glDeviceContext);
 
 		XWindowAttributes gwa;
-		XGetWindowAttributes(olc_Display, olc_Window, &gwa);
+		XGetWindowAttributes(Jenova_Display, Jenova_Window, &gwa);
 		glViewport(0, 0, gwa.width, gwa.height);
 
 		glSwapIntervalEXT = nullptr;
 		glSwapIntervalEXT = (glSwapInterval_t*)glXGetProcAddress((unsigned char*)"glXSwapIntervalEXT");
 		if (glSwapIntervalEXT)
-			glSwapIntervalEXT(olc_Display, olc_Window, 0);
+			glSwapIntervalEXT(Jenova_Display, Jenova_Window, 0);
 		else
 		{
 			printf("NOTE: Could not disable VSYNC, glXSwapIntervalEXT() was not found!\n");
@@ -2127,7 +2098,7 @@ namespace JenovaSpace
 
 #endif
 
-	//Need a couple of statics as these are singleton instances
+	//need a couple of statics as these are singleton instances
 	//read from multiple locations
 	std::atomic<bool> JenovaPixel::bAtomActive{ false };
 	std::map<uint16_t, uint8_t> JenovaPixel::mapKeys;
@@ -2135,7 +2106,6 @@ namespace JenovaSpace
 #ifdef OLC_DBG_OVERDRAW
 	int JenovaSpace::Sprite::nOverdrawCount = 0;
 #endif
-	//=============================================================
 }
 
 #endif

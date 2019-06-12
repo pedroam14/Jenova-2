@@ -95,7 +95,7 @@ public:
 		inline static Matrix4x4 Mat_MakeTranslation(double x, double y, double z);
 		inline static Matrix4x4 Mat_MakeProjection(double fFovDegrees, double fAspectRatio, double fNear, double fFar);
 		inline static Matrix4x4 Mat_PointAt(Vector3D &pos, Vector3D &target, Vector3D &up);
-		inline static Matrix4x4 Mat_QuickInverse(Matrix4x4 &m); // Only for Rotation/Translation Matrices
+		inline static Matrix4x4 Mat_QuickInverse(Matrix4x4 &m); //only for Rotation/Translation Matrices
 		inline static Matrix4x4 Mat_Inverse(JenovaSpace::GFX3D::Matrix4x4 &m);
 
 		inline static Vector3D Vec_Add(Vector3D &v1, Vector3D &v2);
@@ -132,8 +132,7 @@ public:
 		void SetTransform(JenovaSpace::GFX3D::Matrix4x4 &transform);
 		void SetTexture(JenovaSpace::Sprite *texture);
 		void SetLightSource(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &dir, JenovaSpace::Pixel &col);
-		uint32_t Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, uint32_t flags = RENDER_CULL_CW | RENDER_TEXTURED | RENDER_DEPTH);
-		uint32_t Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, bool affine = false, uint32_t flags = RENDER_CULL_CW | RENDER_TEXTURED | RENDER_DEPTH);
+		uint32_t Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, bool affine, uint32_t flags = RENDER_CULL_CW | RENDER_TEXTURED | RENDER_DEPTH);
 
 	private:
 		JenovaSpace::GFX3D::Matrix4x4 matProj;
@@ -160,7 +159,7 @@ public:
 	inline static void DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Sprite *spr);
 	inline static void TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 										int x2, int y2, double u2, double v2, double w2,
-										int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine = false);
+										int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine);
 
 	// Draws a sprite with the transform applied
 	//inline static void DrawSprite(JenovaSpace::Sprite *sprite, JenovaSpace::GFX2D::Transform2D &transform);
@@ -312,7 +311,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_PointAt(JenovaSpace:
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_QuickInverse(JenovaSpace::GFX3D::Matrix4x4 &m) // Only for Rotation/Translation Matrices
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_QuickInverse(JenovaSpace::GFX3D::Matrix4x4 &m) //only for Rotation/Translation Matrices
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = m.m[0][0];
@@ -775,9 +774,9 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		double tex_u, tex_v, tex_w;
 
 		double dax_step = 0, dbx_step = 0,
-			   du1_step = 0, dv1_step = 0,
-			   du2_step = 0, dv2_step = 0,
-			   dw1_step = 0, dw2_step = 0;
+			  du1_step = 0, dv1_step = 0,
+			  du2_step = 0, dv2_step = 0,
+			  dw1_step = 0, dw2_step = 0;
 
 		if (dy1)
 			dax_step = dx1 / (double)abs(dy1);
@@ -1105,265 +1104,247 @@ void GFX3D::PipeLine::SetTexture(JenovaSpace::Sprite *texture)
 void GFX3D::PipeLine::SetLightSource(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &dir, JenovaSpace::Pixel &col)
 {
 }
-uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, uint32_t flags)
-{
-	// Calculate Transformation Matrix
-	Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
-	//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
 
-	// Store Triangles for rastering later
-	std::vector<GFX3D::Triangle> vecTrianglesToRaster;
-
-	int nTriangleDrawnCount = 0;
-
-	// Process Triangles
-	for (auto &tri : Triangles)
-	{
-		GFX3D::Triangle triTransformed;
-
-		// Just copy through texture coordinates
-		triTransformed.t[0] = {tri.t[0].x, tri.t[0].y, tri.t[0].z};
-		triTransformed.t[1] = {tri.t[1].x, tri.t[1].y, tri.t[1].z};
-		triTransformed.t[2] = {tri.t[2].x, tri.t[2].y, tri.t[2].z}; // Think!
-
-		// Transform Triangle from object into projected space
-		triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
-		triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
-		triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
-
-		// Calculate Triangle Normal in WorldView Space
-		GFX3D::Vector3D normal, line1, line2;
-		line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
-		line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
-		normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
-		normal = GFX3D::Math::Vec_Normalise(normal);
-
-		// Cull Triangles that face away from viewer
-		if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
-			continue;
-		if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
-			continue;
-
-		// If Lighting, calculate shading
-		triTransformed.col = JenovaSpace::WHITE;
-
-		// Clip Triangle against near plane
-		int nClippedTriangles = 0;
-		Triangle clipped[2];
-		nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
-
-		// This may yield two new Triangles
-		for (int n = 0; n < nClippedTriangles; n++)
-		{
-			Triangle triProjected = clipped[n];
-
-			// Project new Triangle
-			triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
-			triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
-			triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
-
-			// Apply Projection to Verts
-			triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
-			triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
-			triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
-
-			triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
-			triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
-			triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
-
-			triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
-			triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
-			triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
-
-			// Apply Projection to Tex coords
-			triProjected.t[0].x = triProjected.t[0].x / triProjected.p[0].w;
-			triProjected.t[1].x = triProjected.t[1].x / triProjected.p[1].w;
-			triProjected.t[2].x = triProjected.t[2].x / triProjected.p[2].w;
-
-			triProjected.t[0].y = triProjected.t[0].y / triProjected.p[0].w;
-			triProjected.t[1].y = triProjected.t[1].y / triProjected.p[1].w;
-			triProjected.t[2].y = triProjected.t[2].y / triProjected.p[2].w;
-
-			triProjected.t[0].z = 1.0f / triProjected.p[0].w;
-			triProjected.t[1].z = 1.0f / triProjected.p[1].w;
-			triProjected.t[2].z = 1.0f / triProjected.p[2].w;
-
-			// Clip against viewport in screen space
-			// Clip Triangles against all four screen edges, this could yield
-			// a bunch of Triangles, so create a queue that we traverse to
-			//  ensure we only test new Triangles generated against planes
-			Triangle sclipped[2];
-			std::list<Triangle> listTriangles;
-
-			// Add initial Triangle
-			listTriangles.push_back(triProjected);
-			int nNewTriangles = 1;
-
-			for (int p = 0; p < 4; p++)
-			{
-				int nTrisToAdd = 0;
-				while (nNewTriangles > 0)
-				{
-					// Take Triangle from front of queue
-					Triangle test = listTriangles.front();
-					listTriangles.pop_front();
-					nNewTriangles--;
-
-					// Clip it against a plane. We only need to test each
-					// subsequent plane, against subsequent new Triangles
-					// as all Triangles after a plane clip are guaranteed
-					// to lie on the inside of the plane. I like how this
-					// comment is almost completely and utterly justified
-					switch (p)
-					{
-					case 0:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 1:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 2:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 3:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					}
-
-					// Clipping may yield a variable number of Triangles, so
-					// add these new ones to the back of the queue for subsequent
-					// clipping against next planes
-					for (int w = 0; w < nTrisToAdd; w++)
-						listTriangles.push_back(sclipped[w]);
-				}
-				nNewTriangles = listTriangles.size();
-			}
-
-			for (auto &triRaster : listTriangles)
-			{
-				// Scale to viewport
-				/*triRaster.p[0].x *= -1.0f;
-					triRaster.p[1].x *= -1.0f;
-					triRaster.p[2].x *= -1.0f;
-					triRaster.p[0].y *= -1.0f;
-					triRaster.p[1].y *= -1.0f;
-					triRaster.p[2].y *= -1.0f;*/
-				Vector3D vOffsetView = {1, 1, 0};
-				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
-				triRaster.p[0].x *= 0.5f * fViewW;
-				triRaster.p[0].y *= 0.5f * fViewH;
-				triRaster.p[1].x *= 0.5f * fViewW;
-				triRaster.p[1].y *= 0.5f * fViewH;
-				triRaster.p[2].x *= 0.5f * fViewW;
-				triRaster.p[2].y *= 0.5f * fViewH;
-				vOffsetView = {fViewX, fViewY, 0};
-				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
-
-				// For now, just draw Triangle
-
-				if (flags & RENDER_TEXTURED)
-				{
-					TexturedTriangle(
-						triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
-						triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
-						triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
-						sprTexture);
-				}
-
-				if (flags & RENDER_WIRE)
-				{
-					DrawTriangleWire(triRaster, JenovaSpace::RED);
-				}
-
-				if (flags & RENDER_FLAT)
-				{
-					DrawTriangleFlat(triRaster);
-				}
-
-				nTriangleDrawnCount++;
-			}
-		}
-	}
-
-	return nTriangleDrawnCount;
-}
 uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, bool affine, uint32_t flags)
 {
-	//calculate Transformation Matrix
-	Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
-	//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
-
-	//store Triangles for rastering later
-	std::vector<GFX3D::Triangle> vecTrianglesToRaster;
-
-	int nTriangleDrawnCount = 0;
-
-	//process Triangles
-	for (auto &tri : Triangles)
+	if (affine)
 	{
-		GFX3D::Triangle triTransformed;
+		//calculate Transformation Matrix
+		Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
+		//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
 
-		//just copy through texture coordinates
-		triTransformed.t[0] = {tri.t[0].x, tri.t[0].y};
-		triTransformed.t[1] = {tri.t[1].x, tri.t[1].y};
-		triTransformed.t[2] = {tri.t[2].x, tri.t[2].y}; // Think!
+		//store Triangles for rastering later
+		std::vector<GFX3D::Triangle> vecTrianglesToRaster;
 
-		//transform Triangle from object into projected space
-		triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
-		triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
-		triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
+		int nTriangleDrawnCount = 0;
 
-		//calculate Triangle Normal in WorldView Space
-		GFX3D::Vector3D normal, line1, line2;
-		line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
-		line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
-		normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
-		normal = GFX3D::Math::Vec_Normalise(normal);
-
-		//cull Triangles that face away from viewer
-		if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
-			continue;
-		if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
-			continue;
-
-		//if Lighting, calculate shading
-		triTransformed.col = JenovaSpace::WHITE;
-
-		//clip Triangle against near plane
-		int nClippedTriangles = 0;
-		Triangle clipped[2];
-		nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
-
-		//this may yield two new Triangles
-		for (int n = 0; n < nClippedTriangles; n++)
+		//process Triangles
+		for (auto &tri : Triangles)
 		{
-			Triangle triProjected = clipped[n];
+			GFX3D::Triangle triTransformed;
 
-			//project new Triangle
-			triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
-			triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
-			triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
+			//just copy through texture coordinates
+			triTransformed.t[0] = {tri.t[0].x, tri.t[0].y};
+			triTransformed.t[1] = {tri.t[1].x, tri.t[1].y};
+			triTransformed.t[2] = {tri.t[2].x, tri.t[2].y}; // Think!
 
-			//apply Projection to Verts
-			triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
-			triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
-			triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
+			//transform Triangle from object into projected space
+			triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
+			triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
+			triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
 
-			triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
-			triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
-			triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
+			//calculate Triangle Normal in WorldView Space
+			GFX3D::Vector3D normal, line1, line2;
+			line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
+			line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
+			normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
+			normal = GFX3D::Math::Vec_Normalise(normal);
 
-			triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
-			triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
-			triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
+			//cull Triangles that face away from viewer
+			if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
+				continue;
+			if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
+				continue;
 
-			//in case you want legit™ psx graphics, you'll want to set affine to true, so that texture mapping will be interpolated as opposed to having perspective correction
-			if (!affine)
+			//if Lighting, calculate shading
+			triTransformed.col = JenovaSpace::WHITE;
+
+			//clip Triangle against near plane
+			int nClippedTriangles = 0;
+			Triangle clipped[2];
+			nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
+
+			//this may yield two new Triangles
+			for (int n = 0; n < nClippedTriangles; n++)
 			{
+				Triangle triProjected = clipped[n];
+
+				//project new Triangle
+				triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
+				triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
+				triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
+
+				//apply Projection to Verts
+				triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
+				triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
+				triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
+
+				triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
+				triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
+				triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
+
+				triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
+				triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
+				triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
+
+				//clip against viewport in screen space
+				//clip Triangles against all four screen edges, this could yield a bunch of Triangles, so create a queue that we traverse to ensure we only test new Triangles generated against planes
+				Triangle sclipped[2];
+				std::list<Triangle> listTriangles;
+
+				//add initial Triangle
+				listTriangles.push_back(triProjected);
+				int nNewTriangles = 1;
+
+				for (int p = 0; p < 4; p++)
+				{
+					int nTrisToAdd = 0;
+					while (nNewTriangles > 0)
+					{
+						//take Triangle from front of queue
+						Triangle test = listTriangles.front();
+						listTriangles.pop_front();
+						nNewTriangles--;
+
+						//clip it against a plane. We only need to test each subsequent plane, against subsequent new Triangles as all Triangles after a plane clip are guaranteed to lie on the inside of the plane. I like how this comment is almost completely and utterly justified
+						switch (p)
+						{
+						case 0:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 1:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 2:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 3:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						}
+
+						//clipping may yield a variable number of Triangles, so add these new ones to the back of the queue for subsequent clipping against next planes
+						for (int w = 0; w < nTrisToAdd; w++)
+							listTriangles.push_back(sclipped[w]);
+					}
+					nNewTriangles = listTriangles.size();
+				}
+
+				for (auto &triRaster : listTriangles)
+				{
+					//scale to viewport
+					/*
+							triRaster.p[0].x *= -1.0f;
+							triRaster.p[1].x *= -1.0f;
+							triRaster.p[2].x *= -1.0f;
+							triRaster.p[0].y *= -1.0f;
+							triRaster.p[1].y *= -1.0f;
+							triRaster.p[2].y *= -1.0f;
+							*/
+					Vector3D vOffsetView = {1, 1, 0};
+					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+					triRaster.p[0].x *= 0.5f * fViewW;
+					triRaster.p[0].y *= 0.5f * fViewH;
+					triRaster.p[1].x *= 0.5f * fViewW;
+					triRaster.p[1].y *= 0.5f * fViewH;
+					triRaster.p[2].x *= 0.5f * fViewW;
+					triRaster.p[2].y *= 0.5f * fViewH;
+					vOffsetView = {fViewX, fViewY, 0};
+					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+
+					//for now, just draw Triangle
+
+					if (flags & RENDER_TEXTURED)
+					{
+						TexturedTriangle(
+							triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
+							triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
+							triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
+							sprTexture, affine);
+					}
+
+					if (flags & RENDER_WIRE)
+					{
+						DrawTriangleWire(triRaster, JenovaSpace::RED);
+					}
+
+					if (flags & RENDER_FLAT)
+					{
+						DrawTriangleFlat(triRaster);
+					}
+
+					nTriangleDrawnCount++;
+				}
+			}
+		}
+
+		return nTriangleDrawnCount;
+	}
+	else
+	{
+		// Calculate Transformation Matrix
+		Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
+		//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
+
+		// Store triangles for rastering later
+		std::vector<GFX3D::Triangle> vecTrianglesToRaster;
+
+		int nTriangleDrawnCount = 0;
+
+		// Process Triangles
+		for (auto &tri : Triangles)
+		{
+			GFX3D::Triangle triTransformed;
+
+			// Just copy through texture coordinates
+			triTransformed.t[0] = {tri.t[0].x, tri.t[0].y, tri.t[0].z};
+			triTransformed.t[1] = {tri.t[1].x, tri.t[1].y, tri.t[1].z};
+			triTransformed.t[2] = {tri.t[2].x, tri.t[2].y, tri.t[2].z}; // Think!
+
+			// Transform Triangle from object into projected space
+			triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
+			triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
+			triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
+
+			// Calculate Triangle Normal in WorldView Space
+			GFX3D::Vector3D normal, line1, line2;
+			line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
+			line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
+			normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
+			normal = GFX3D::Math::Vec_Normalise(normal);
+
+			// Cull triangles that face away from viewer
+			if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
+				continue;
+			if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
+				continue;
+
+			// If Lighting, calculate shading
+			triTransformed.col = JenovaSpace::WHITE;
+
+			// Clip Triangle against near plane
+			int nClippedTriangles = 0;
+			Triangle clipped[2];
+			nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
+
+			// This may yield two new triangles
+			for (int n = 0; n < nClippedTriangles; n++)
+			{
+				Triangle triProjected = clipped[n];
+
+				// Project new triangle
+				triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
+				triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
+				triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
+
+				// Apply Projection to Verts
+				triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
+				triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
+				triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
+
+				triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
+				triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
+				triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
+
+				triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
+				triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
+				triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
+
+				// Apply Projection to Tex coords
 				triProjected.t[0].x = triProjected.t[0].x / triProjected.p[0].w;
 				triProjected.t[1].x = triProjected.t[1].x / triProjected.p[1].w;
 				triProjected.t[2].x = triProjected.t[2].x / triProjected.p[2].w;
@@ -1375,104 +1356,110 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Tria
 				triProjected.t[0].z = 1.0f / triProjected.p[0].w;
 				triProjected.t[1].z = 1.0f / triProjected.p[1].w;
 				triProjected.t[2].z = 1.0f / triProjected.p[2].w;
-			}
 
-			//clip against viewport in screen space
-			//clip Triangles against all four screen edges, this could yield a bunch of Triangles, so create a queue that we traverse to ensure we only test new Triangles generated against planes
-			Triangle sclipped[2];
-			std::list<Triangle> listTriangles;
+				// Clip against viewport in screen space
+				// Clip triangles against all four screen edges, this could yield
+				// a bunch of triangles, so create a queue that we traverse to
+				//  ensure we only test new triangles generated against planes
+				Triangle sclipped[2];
+				std::list<Triangle> listTriangles;
 
-			//add initial Triangle
-			listTriangles.push_back(triProjected);
-			int nNewTriangles = 1;
+				// Add initial triangle
+				listTriangles.push_back(triProjected);
+				int nNewTriangles = 1;
 
-			for (int p = 0; p < 4; p++)
-			{
-				int nTrisToAdd = 0;
-				while (nNewTriangles > 0)
+				for (int p = 0; p < 4; p++)
 				{
-					//take Triangle from front of queue
-					Triangle test = listTriangles.front();
-					listTriangles.pop_front();
-					nNewTriangles--;
-
-					//clip it against a plane. We only need to test each subsequent plane, against subsequent new Triangles as all Triangles after a plane clip are guaranteed to lie on the inside of the plane. I like how this comment is almost completely and utterly justified
-					switch (p)
+					int nTrisToAdd = 0;
+					while (nNewTriangles > 0)
 					{
-					case 0:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 1:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 2:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
-					case 3:
-						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-						break;
+						// Take Triangle from front of queue
+						Triangle test = listTriangles.front();
+						listTriangles.pop_front();
+						nNewTriangles--;
+
+						// Clip it against a plane. We only need to test each
+						// subsequent plane, against subsequent new triangles
+						// as all triangles after a plane clip are guaranteed
+						// to lie on the inside of the plane. I like how this
+						// comment is almost completely and utterly justified
+						switch (p)
+						{
+						case 0:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 1:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 2:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						case 3:
+							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+							break;
+						}
+
+						// Clipping may yield a variable number of triangles, so
+						// add these new ones to the back of the queue for subsequent
+						// clipping against next planes
+						for (int w = 0; w < nTrisToAdd; w++)
+							listTriangles.push_back(sclipped[w]);
 					}
-
-					//clipping may yield a variable number of Triangles, so add these new ones to the back of the queue for subsequent clipping against next planes
-					for (int w = 0; w < nTrisToAdd; w++)
-						listTriangles.push_back(sclipped[w]);
+					nNewTriangles = listTriangles.size();
 				}
-				nNewTriangles = listTriangles.size();
-			}
 
-			for (auto &triRaster : listTriangles)
-			{
-				//scale to viewport
-				/*
-						triRaster.p[0].x *= -1.0f;
+				for (auto &triRaster : listTriangles)
+				{
+					// Scale to viewport
+					/*triRaster.p[0].x *= -1.0f;
 						triRaster.p[1].x *= -1.0f;
 						triRaster.p[2].x *= -1.0f;
 						triRaster.p[0].y *= -1.0f;
 						triRaster.p[1].y *= -1.0f;
-						triRaster.p[2].y *= -1.0f;
-						*/
-				Vector3D vOffsetView = {1, 1, 0};
-				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
-				triRaster.p[0].x *= 0.5f * fViewW;
-				triRaster.p[0].y *= 0.5f * fViewH;
-				triRaster.p[1].x *= 0.5f * fViewW;
-				triRaster.p[1].y *= 0.5f * fViewH;
-				triRaster.p[2].x *= 0.5f * fViewW;
-				triRaster.p[2].y *= 0.5f * fViewH;
-				vOffsetView = {fViewX, fViewY, 0};
-				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+						triRaster.p[2].y *= -1.0f;*/
+					Vector3D vOffsetView = {1, 1, 0};
+					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+					triRaster.p[0].x *= 0.5f * fViewW;
+					triRaster.p[0].y *= 0.5f * fViewH;
+					triRaster.p[1].x *= 0.5f * fViewW;
+					triRaster.p[1].y *= 0.5f * fViewH;
+					triRaster.p[2].x *= 0.5f * fViewW;
+					triRaster.p[2].y *= 0.5f * fViewH;
+					vOffsetView = {fViewX, fViewY, 0};
+					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
 
-				//for now, just draw Triangle
+					// For now, just draw triangle
 
-				if (flags & RENDER_TEXTURED)
-				{
-					TexturedTriangle(
-						triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
-						triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
-						triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
-						sprTexture, affine);
+					if (flags & RENDER_TEXTURED)
+					{
+						TexturedTriangle(
+							triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
+							triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
+							triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
+							sprTexture, false);
+					}
+
+					if (flags & RENDER_WIRE)
+					{
+						DrawTriangleWire(triRaster, JenovaSpace::RED);
+					}
+
+					if (flags & RENDER_FLAT)
+					{
+						DrawTriangleFlat(triRaster);
+					}
+
+					nTriangleDrawnCount++;
 				}
-
-				if (flags & RENDER_WIRE)
-				{
-					DrawTriangleWire(triRaster, JenovaSpace::RED);
-				}
-
-				if (flags & RENDER_FLAT)
-				{
-					DrawTriangleFlat(triRaster);
-				}
-
-				nTriangleDrawnCount++;
 			}
 		}
-	}
 
-	return nTriangleDrawnCount;
+		return nTriangleDrawnCount;
+	}
 }
 } //namespace JenovaSpace
 #endif
