@@ -46,16 +46,16 @@ private:
 	JenovaSpace::Sprite *sprChar[12];
 	JenovaSpace::Sprite *sprCharSheet;
 
-	double fCameraX = 0.0f;
-	double fCameraY = 0.0f;
-	double fCameraZ = -10.0f;
+	float fCameraX = 0.0f;
+	float fCameraY = 0.0f;
+	float fCameraZ = -10.0f;
 
 	JenovaSpace::GFX3D::Mesh meshCube;
 	JenovaSpace::GFX3D::Mesh meshFlat;
 	JenovaSpace::GFX3D::Mesh meshWallsOut;
 
-	double fCharAngle = 0.0f;
-	double fCharSpeed = 2.0f;
+	float fCharAngle = 0.0f;
+	float fCharSpeed = 2.0f;
 	JenovaSpace::GFX3D::Vector3D vecCharVel = { 0,0,0 };
 	JenovaSpace::GFX3D::Vector3D vecCharPos = { 0,0,0 };
 
@@ -178,7 +178,7 @@ public:
 		//Here the geometry is unit in size (1x1x1)
 
 		//A Full cube - Always useful for debugging
-		meshCube.Triangles =
+		meshCube.tris =
 		{
 			//SOUTH
 			{ 0.0f, 0.0f, 0.0f, 1.0f,	    0.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 1.0f, 0.0f, 1.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
@@ -207,30 +207,30 @@ public:
 		};
 
 		//A Flat quad
-		meshFlat.Triangles =
+		meshFlat.tris =
 		{
 			{ 0.0f, 0.0f, 0.0f, 1.0f,	    0.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 1.0f, 0.0f, 1.0f,	0.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
 			{ 0.0f, 0.0f, 0.0f, 1.0f,  		1.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 0.0f, 0.0f, 1.0f,	0.0f, 0.0f, 0.0f,	1.0f, 1.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
 		};
 
 		//The four outer walls of a cell
-		meshWallsOut.Triangles =
+		meshWallsOut.tris =
 		{
 			//EAST
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2f, 1.0f,		1.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		0.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2f, 1.0f,		1.0f, 0.0f, 0.2f, 1.0f,		1.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f, },
+			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		0.0f, 0.0f, 0.0f, },
+			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 0.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f, },
 
 			//WEST
-			{ 0.0f, 0.0f, 0.2f, 1.0f,		0.0f, 1.0f, 0.2f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 0.0f, 0.0f, 0.2f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+			{ 0.0f, 0.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
+			{ 0.0f, 0.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
 
 			//TOP             																 				    
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.2f, 1.0f,		1.0f, 1.0f, 0.2f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f,   },
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f, 		1.0f, 1.0f, 0.0f,   },
+			{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f,   },
+			{ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f, 		1.0f, 1.0f, 0.0f,   },
 
 			//BOTTOM         																 				   
-			{ 1.0f, 0.0f, 0.2f, 1.0f,		0.0f, 0.0f, 0.2f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 0.2f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+			{ 1.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
+			{ 1.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
 		};
 
 
@@ -239,17 +239,19 @@ public:
 		JenovaSpace::GFX3D::ConfigureDisplay();
 
 		//Configure the rendering pipeline with projection and viewport properties
-		pipeRender.SetProjection(90.0f, (double)ScreenHeight() / (double)ScreenWidth(), 0.1f, 1000.0f, 0.0f, 0.0f, ScreenWidth(), ScreenHeight());
+		pipeRender.SetProjection(90.0f, (float)ScreenHeight() / (float)ScreenWidth(), 0.1, 1000.0f, 0.0f, 0.0f, ScreenWidth(), ScreenHeight());
 
 		//Also make a projection matrix, we might need this later
-		matProj = JenovaSpace::GFX3D::Math::Mat_MakeProjection(90.0f, (double)ScreenHeight() / (double)ScreenWidth(), 0.1f, 1000.0f);
+		matProj = JenovaSpace::GFX3D::Math::Mat_MakeProjection(90.0f, (float)ScreenHeight() / (float)ScreenWidth(), 0.1, 1000.0f);
 
+		//setting affine texture mapping to false, in order to correct for perspective
+		pipeRender.SetTextureMappingMode(true);
 
 		//Ok, lets go!
 		return true;
 	}
 
-	bool OnUserUpdate(double fElapsedTime) override
+	bool OnUserUpdate(float fElapsedTime) override
 	{
 		//Directly manipulate camera
 		if (GetKey(JenovaSpace::Key::W).bHeld)
@@ -363,8 +365,8 @@ public:
 		//...and that a ray is cast to the mouse location from the origin. Here we translate
 		//the mouse coordinates into viewport coordinates
 		JenovaSpace::GFX3D::Vector3D vecMouseDir = {
-			2.0f * ((GetMouseX() / (double)ScreenWidth()) - 0.5f) / matProj.m[0][0],
-			2.0f * ((GetMouseY() / (double)ScreenHeight()) - 0.5f) / matProj.m[1][1],
+			2.0f * ((GetMouseX() / (float)ScreenWidth()) - 0.5f) / matProj.m[0][0],
+			2.0f * ((GetMouseY() / (float)ScreenHeight()) - 0.5f) / matProj.m[1][1],
 			1.0f,
 			0.0f };
 
@@ -384,7 +386,7 @@ public:
 		JenovaSpace::GFX3D::Vector3D plane_n = { 0.0f, 0.0f, 1.0f };
 
 		//Calculate Mouse Location in plane, by doing a line/plane intersection test
-		double t = 0.0f;
+		float t = 0.0f;
 		JenovaSpace::GFX3D::Vector3D mouse3d = JenovaSpace::GFX3D::Math::Vec_IntersectPlane(plane_p, plane_n, vecMouseOrigin, vecMouseDir, t);
 
 
@@ -487,7 +489,7 @@ public:
 					pipeRender.SetTexture(sprRoad[road]);
 
 					//draw a flat quad
-					pipeRender.Render(meshFlat.Triangles, true);
+					pipeRender.Render(meshFlat.tris);
 
 				}
 				else //Not Road
@@ -505,7 +507,7 @@ public:
 						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, 0.0f);
 						pipeRender.SetTransform(matWorld);
 						pipeRender.SetTexture(sprGround);
-						pipeRender.Render(meshFlat.Triangles, true);
+						pipeRender.Render(meshFlat.tris);
 					}
 
 					if (pMap[y*nMapWidth + x].nHeight > 0)
@@ -522,14 +524,14 @@ public:
 
 							//Choose a texture, if its ground level, use the "street level front", otherwise use windows
 							pipeRender.SetTexture(h == 0 ? sprFrontage : sprWindows);
-							pipeRender.Render(meshWallsOut.Triangles, true);
+							pipeRender.Render(meshWallsOut.tris);
 						}
 
 						//Top the building off with a roof
 						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, -(h) * 0.2f);
 						pipeRender.SetTransform(matWorld);
 						pipeRender.SetTexture(sprRoof);
-						pipeRender.Render(meshFlat.Triangles, true);
+						pipeRender.Render(meshFlat.tris);
 					}
 				}
 			}
@@ -543,15 +545,15 @@ public:
 			JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(cell->nWorldX, cell->nWorldY, 0.0f);
 			pipeRender.SetTransform(matWorld);
 			pipeRender.SetTexture(sprRoof);
-			pipeRender.Render(meshFlat.Triangles, true, JenovaSpace::GFX3D::RENDER_WIRE);
+			pipeRender.Render(meshFlat.tris, JenovaSpace::GFX3D::RENDER_WIRE);
 		}
 
 		//Draw Char, a few transforms required for this
 
 		//1) Offset the char to the middle of the quad
-		JenovaSpace::GFX3D::Matrix4x4 matCharOffset = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(-0.5f, -0.5f, -0.0f);
+		JenovaSpace::GFX3D::Matrix4x4 matCharOffset = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(-0.5, -0.5, -0.0f);
 		//2) The quad is currently unit square, scale it to be more rectangular and smaller than the cells
-		JenovaSpace::GFX3D::Matrix4x4 matCharScale = JenovaSpace::GFX3D::Math::Mat_MakeScale(0.2f, 0.4f, 1.0f);
+		JenovaSpace::GFX3D::Matrix4x4 matCharScale = JenovaSpace::GFX3D::Math::Mat_MakeScale(0.2, 0.4, 1.0f);
 		//3) Combine into matrix
 		JenovaSpace::GFX3D::Matrix4x4 matChar = JenovaSpace::GFX3D::Math::Mat_MultiplyMatrix(matCharOffset, matCharScale);
 		//4) Rotate the char around its offset origin, according to its angle
@@ -569,7 +571,7 @@ public:
 		//The char has transparency, so enable it
 		SetPixelMode(JenovaSpace::Pixel::ALPHA);
 		//Render the quad
-		pipeRender.Render(meshFlat.Triangles, false);
+		pipeRender.Render(meshFlat.tris);
 		//Set transparency back to none to optimise drawing other pixels
 		SetPixelMode(JenovaSpace::Pixel::NORMAL);
 
@@ -583,7 +585,7 @@ public:
 int main()
 {
 	MapEditor demo;
-	if (demo.Construct(768, 480, 2, 2))
+	if (demo.Construct(768, 480, 1, 1))
 	{
 		demo.Start();
 	}

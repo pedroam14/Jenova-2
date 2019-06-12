@@ -1,11 +1,10 @@
-#ifdef JENOVA3D
-#define JENOVA3D
-#include "Jenova.h"
+
+#ifndef OLC_PGEX_GFX3D
+#define OLC_PGEX_GFX3D
+
 #include <algorithm>
 #include <vector>
 #include <list>
-#include <fstream>
-#include <strstream>
 #undef min
 #undef max
 
@@ -18,17 +17,17 @@ class GFX3D : public JenovaSpace::JenovaExtension
 public:
 	struct Vector2D
 	{
-		double x = 0;
-		double y = 0;
-		double z = 0;
+		float x = 0;
+		float y = 0;
+		float z = 0;
 	};
 
 	struct Vector3D
 	{
-		double x = 0;
-		double y = 0;
-		double z = 0;
-		double w = 1; // Need a 4th term to perform sensible matrix vector multiplication
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		float w = 1; // Need a 4th term to perform sensible matrix vector multiplication
 	};
 
 	struct Triangle
@@ -40,43 +39,12 @@ public:
 
 	struct Matrix4x4
 	{
-		double m[4][4] = {0};
+		float m[4][4] = {0};
 	};
 
 	struct Mesh
 	{
-		std::vector<Triangle> Triangles;
-		bool LoadObjectFromFile(std::string filename)
-		{
-			std::ifstream file(filename);
-			if (!file.is_open())
-			{
-				return false;
-			}
-			//cache of verts
-			std::vector<Vector3D> verts;
-			while (!file.eof())
-			{
-				char line[128];
-				file.getline(line, 128);
-				std::strstream str;
-				str << line;
-				char junk;
-				if (line[0] == 'v')
-				{
-					Vector3D v;
-					str >> junk >> v.x >> v.y >> v.z;
-					verts.push_back(v);
-				}
-				if (line[0] == 'f')
-				{
-					int f[3];
-					str >> junk >> f[0] >> f[1] >> f[2];
-					Triangles.push_back({verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1]});
-				}
-			}
-			return true;
-		}
+		std::vector<Triangle> tris;
 	};
 
 	class Math
@@ -88,25 +56,25 @@ public:
 		inline static Vector3D Mat_MultiplyVector(Matrix4x4 &m, Vector3D &i);
 		inline static Matrix4x4 Mat_MultiplyMatrix(Matrix4x4 &m1, Matrix4x4 &m2);
 		inline static Matrix4x4 Mat_MakeIdentity();
-		inline static Matrix4x4 Mat_MakeRotationX(double fAngleRad);
-		inline static Matrix4x4 Mat_MakeRotationY(double fAngleRad);
-		inline static Matrix4x4 Mat_MakeRotationZ(double fAngleRad);
-		inline static Matrix4x4 Mat_MakeScale(double x, double y, double z);
-		inline static Matrix4x4 Mat_MakeTranslation(double x, double y, double z);
-		inline static Matrix4x4 Mat_MakeProjection(double fFovDegrees, double fAspectRatio, double fNear, double fFar);
+		inline static Matrix4x4 Mat_MakeRotationX(float fAngleRad);
+		inline static Matrix4x4 Mat_MakeRotationY(float fAngleRad);
+		inline static Matrix4x4 Mat_MakeRotationZ(float fAngleRad);
+		inline static Matrix4x4 Mat_MakeScale(float x, float y, float z);
+		inline static Matrix4x4 Mat_MakeTranslation(float x, float y, float z);
+		inline static Matrix4x4 Mat_MakeProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar);
 		inline static Matrix4x4 Mat_PointAt(Vector3D &pos, Vector3D &target, Vector3D &up);
-		inline static Matrix4x4 Mat_QuickInverse(Matrix4x4 &m); //only for Rotation/Translation Matrices
+		inline static Matrix4x4 Mat_QuickInverse(Matrix4x4 &m); // Only for Rotation/Translation Matrices
 		inline static Matrix4x4 Mat_Inverse(JenovaSpace::GFX3D::Matrix4x4 &m);
 
 		inline static Vector3D Vec_Add(Vector3D &v1, Vector3D &v2);
 		inline static Vector3D Vec_Sub(Vector3D &v1, Vector3D &v2);
-		inline static Vector3D Vec_Mul(Vector3D &v1, double k);
-		inline static Vector3D Vec_Div(Vector3D &v1, double k);
-		inline static double Vec_DotProduct(Vector3D &v1, Vector3D &v2);
-		inline static double Vec_Length(Vector3D &v);
+		inline static Vector3D Vec_Mul(Vector3D &v1, float k);
+		inline static Vector3D Vec_Div(Vector3D &v1, float k);
+		inline static float Vec_DotProduct(Vector3D &v1, Vector3D &v2);
+		inline static float Vec_Length(Vector3D &v);
 		inline static Vector3D Vec_Normalise(Vector3D &v);
 		inline static Vector3D Vec_CrossProduct(Vector3D &v1, Vector3D &v2);
-		inline static Vector3D Vec_IntersectPlane(Vector3D &plane_p, Vector3D &plane_n, Vector3D &lineStart, Vector3D &lineEnd, double &t);
+		inline static Vector3D Vec_IntersectPlane(Vector3D &plane_p, Vector3D &plane_n, Vector3D &lineStart, Vector3D &lineEnd, float &t);
 
 		inline static int Triangle_ClipAgainstPlane(Vector3D plane_p, Vector3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2);
 	};
@@ -125,24 +93,26 @@ public:
 	{
 	public:
 		PipeLine();
+		bool affine;
 
 	public:
-		void SetProjection(double fFovDegrees, double fAspectRatio, double fNear, double fFar, double fLeft, double fTop, double fWidth, double fHeight);
+		void SetProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar, float fLeft, float fTop, float fWidth, float fHeight);
 		void SetCamera(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &lookat, JenovaSpace::GFX3D::Vector3D &up);
 		void SetTransform(JenovaSpace::GFX3D::Matrix4x4 &transform);
 		void SetTexture(JenovaSpace::Sprite *texture);
 		void SetLightSource(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &dir, JenovaSpace::Pixel &col);
-		uint32_t Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, bool affine, uint32_t flags = RENDER_CULL_CW | RENDER_TEXTURED | RENDER_DEPTH);
+		uint32_t Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, uint32_t flags = RENDER_CULL_CW | RENDER_TEXTURED | RENDER_DEPTH);
+		void SetTextureMappingMode(bool bAffine);
 
 	private:
 		JenovaSpace::GFX3D::Matrix4x4 matProj;
 		JenovaSpace::GFX3D::Matrix4x4 matView;
 		JenovaSpace::GFX3D::Matrix4x4 matWorld;
 		JenovaSpace::Sprite *sprTexture;
-		double fViewX;
-		double fViewY;
-		double fViewW;
-		double fViewH;
+		float fViewX;
+		float fViewY;
+		float fViewW;
+		float fViewH;
 	};
 
 public:
@@ -157,15 +127,15 @@ public:
 	inline static void DrawTriangleFlat(JenovaSpace::GFX3D::Triangle &tri);
 	inline static void DrawTriangleWire(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Pixel col = JenovaSpace::WHITE);
 	inline static void DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Sprite *spr);
-	inline static void TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
-										int x2, int y2, double u2, double v2, double w2,
-										int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine);
+	inline static void TexturedTriangle(int x1, int y1, float u1, float v1, float w1,
+										int x2, int y2, float u2, float v2, float w2,
+										int x3, int y3, float u3, float v3, float w3, JenovaSpace::Sprite *spr, bool affine);
 
 	// Draws a sprite with the transform applied
 	//inline static void DrawSprite(JenovaSpace::Sprite *sprite, JenovaSpace::GFX2D::Transform2D &transform);
 
 private:
-	static double *m_DepthBuffer;
+	static float *m_DepthBuffer;
 };
 } // namespace JenovaSpace
 
@@ -174,7 +144,6 @@ namespace JenovaSpace
 JenovaSpace::GFX3D::Math::Math()
 {
 }
-
 JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Mat_MultiplyVector(JenovaSpace::GFX3D::Matrix4x4 &m, JenovaSpace::GFX3D::Vector3D &i)
 {
 	Vector3D v;
@@ -195,7 +164,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeIdentity()
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationX(double fAngleRad)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationX(float fAngleRad)
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = 1.0f;
@@ -207,7 +176,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationX(double
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationY(double fAngleRad)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationY(float fAngleRad)
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = cosf(fAngleRad);
@@ -219,7 +188,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationY(double
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationZ(double fAngleRad)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationZ(float fAngleRad)
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = cosf(fAngleRad);
@@ -231,7 +200,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeRotationZ(double
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeScale(double x, double y, double z)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeScale(float x, float y, float z)
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = x;
@@ -241,7 +210,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeScale(double x, 
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeTranslation(double x, double y, double z)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeTranslation(float x, float y, float z)
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = 1.0f;
@@ -254,9 +223,9 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeTranslation(doub
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeProjection(double fFovDegrees, double fAspectRatio, double fNear, double fFar)
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MakeProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar)
 {
-	double fFovRad = 1.0f / tanf(fFovDegrees * 0.5f / 180.0f * 3.14159f);
+	float fFovRad = 1.0f / tanf(fFovDegrees * 0.5f / 180.0f * 3.14159f);
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = fAspectRatio * fFovRad;
 	matrix.m[1][1] = fFovRad;
@@ -278,7 +247,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_MultiplyMatrix(Jenov
 
 JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_PointAt(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &target, JenovaSpace::GFX3D::Vector3D &up)
 {
-	//calculate new forward direction
+	// Calculate new forward direction
 	JenovaSpace::GFX3D::Vector3D newForward = Vec_Sub(target, pos);
 	newForward = Vec_Normalise(newForward);
 
@@ -311,7 +280,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_PointAt(JenovaSpace:
 	return matrix;
 }
 
-JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_QuickInverse(JenovaSpace::GFX3D::Matrix4x4 &m) //only for Rotation/Translation Matrices
+JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_QuickInverse(JenovaSpace::GFX3D::Matrix4x4 &m) // Only for Rotation/Translation Matrices
 {
 	JenovaSpace::GFX3D::Matrix4x4 matrix;
 	matrix.m[0][0] = m.m[0][0];
@@ -335,7 +304,7 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_QuickInverse(JenovaS
 
 JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_Inverse(JenovaSpace::GFX3D::Matrix4x4 &m)
 {
-	double det;
+	float det;
 
 	Matrix4x4 matInv;
 
@@ -357,17 +326,13 @@ JenovaSpace::GFX3D::Matrix4x4 JenovaSpace::GFX3D::Math::Mat_Inverse(JenovaSpace:
 	matInv.m[3][3] = m.m[0][0] * m.m[1][1] * m.m[2][2] - m.m[0][0] * m.m[1][2] * m.m[2][1] - m.m[1][0] * m.m[0][1] * m.m[2][2] + m.m[1][0] * m.m[0][2] * m.m[2][1] + m.m[2][0] * m.m[0][1] * m.m[1][2] - m.m[2][0] * m.m[0][2] * m.m[1][1];
 
 	det = m.m[0][0] * matInv.m[0][0] + m.m[0][1] * matInv.m[1][0] + m.m[0][2] * matInv.m[2][0] + m.m[0][3] * matInv.m[3][0];
-	//if (det == 0) return false;
+	//	if (det == 0) return false;
 
 	det = 1.0 / det;
 
 	for (int i = 0; i < 4; i++)
-	{
 		for (int j = 0; j < 4; j++)
-		{
-			matInv.m[i][j] *= (double)det;
-		}
-	}
+			matInv.m[i][j] *= (float)det;
 
 	return matInv;
 }
@@ -382,29 +347,29 @@ JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Sub(JenovaSpace::GFX3
 	return {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
 }
 
-JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Mul(JenovaSpace::GFX3D::Vector3D &v1, double k)
+JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Mul(JenovaSpace::GFX3D::Vector3D &v1, float k)
 {
 	return {v1.x * k, v1.y * k, v1.z * k};
 }
 
-JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Div(JenovaSpace::GFX3D::Vector3D &v1, double k)
+JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Div(JenovaSpace::GFX3D::Vector3D &v1, float k)
 {
 	return {v1.x / k, v1.y / k, v1.z / k};
 }
 
-double JenovaSpace::GFX3D::Math::Vec_DotProduct(JenovaSpace::GFX3D::Vector3D &v1, JenovaSpace::GFX3D::Vector3D &v2)
+float JenovaSpace::GFX3D::Math::Vec_DotProduct(JenovaSpace::GFX3D::Vector3D &v1, JenovaSpace::GFX3D::Vector3D &v2)
 {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
-double JenovaSpace::GFX3D::Math::Vec_Length(JenovaSpace::GFX3D::Vector3D &v)
+float JenovaSpace::GFX3D::Math::Vec_Length(JenovaSpace::GFX3D::Vector3D &v)
 {
 	return sqrtf(Vec_DotProduct(v, v));
 }
 
 JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_Normalise(JenovaSpace::GFX3D::Vector3D &v)
 {
-	double l = Vec_Length(v);
+	float l = Vec_Length(v);
 	return {v.x / l, v.y / l, v.z / l};
 }
 
@@ -417,12 +382,12 @@ JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_CrossProduct(JenovaSp
 	return v;
 }
 
-JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_IntersectPlane(JenovaSpace::GFX3D::Vector3D &plane_p, JenovaSpace::GFX3D::Vector3D &plane_n, JenovaSpace::GFX3D::Vector3D &lineStart, JenovaSpace::GFX3D::Vector3D &lineEnd, double &t)
+JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_IntersectPlane(JenovaSpace::GFX3D::Vector3D &plane_p, JenovaSpace::GFX3D::Vector3D &plane_n, JenovaSpace::GFX3D::Vector3D &lineStart, JenovaSpace::GFX3D::Vector3D &lineEnd, float &t)
 {
 	plane_n = Vec_Normalise(plane_n);
-	double plane_d = -Vec_DotProduct(plane_n, plane_p);
-	double ad = Vec_DotProduct(lineStart, plane_n);
-	double bd = Vec_DotProduct(lineEnd, plane_n);
+	float plane_d = -Vec_DotProduct(plane_n, plane_p);
+	float ad = Vec_DotProduct(lineStart, plane_n);
+	float bd = Vec_DotProduct(lineEnd, plane_n);
 	t = (-plane_d - ad) / (bd - ad);
 	JenovaSpace::GFX3D::Vector3D lineStartToEnd = Vec_Sub(lineEnd, lineStart);
 	JenovaSpace::GFX3D::Vector3D lineToIntersect = Vec_Mul(lineStartToEnd, t);
@@ -431,7 +396,7 @@ JenovaSpace::GFX3D::Vector3D JenovaSpace::GFX3D::Math::Vec_IntersectPlane(Jenova
 
 int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector3D plane_n, Triangle &in_tri, Triangle &out_tri1, Triangle &out_tri2)
 {
-	//make sure plane normal is indeed normal
+	// Make sure plane normal is indeed normal
 	plane_n = Math::Vec_Normalise(plane_n);
 
 	out_tri1.t[0] = in_tri.t[0];
@@ -441,14 +406,14 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 	out_tri1.t[2] = in_tri.t[2];
 	out_tri2.t[2] = in_tri.t[2];
 
-	//return signed shortest distance from point to plane, plane normal must be normalised
+	// Return signed shortest distance from point to plane, plane normal must be normalised
 	auto dist = [&](Vector3D &p) {
 		Vector3D n = Math::Vec_Normalise(p);
 		return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - Math::Vec_DotProduct(plane_n, plane_p));
 	};
 
-	//create two temporary storage arrays to classify points either side of plane
-	//if distance sign is positive, point lies on "inside" of plane
+	// Create two temporary storage arrays to classify points either side of plane
+	// If distance sign is positive, point lies on "inside" of plane
 	Vector3D *inside_points[3];
 	int nInsidePointCount = 0;
 	Vector3D *outside_points[3];
@@ -458,10 +423,10 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 	Vector2D *outside_tex[3];
 	int nOutsideTexCount = 0;
 
-	//get signed distance of each point in Triangle to plane
-	double d0 = dist(in_tri.p[0]);
-	double d1 = dist(in_tri.p[1]);
-	double d2 = dist(in_tri.p[2]);
+	// Get signed distance of each point in Triangle to plane
+	float d0 = dist(in_tri.p[0]);
+	float d1 = dist(in_tri.p[1]);
+	float d2 = dist(in_tri.p[2]);
 
 	if (d0 >= 0)
 	{
@@ -494,67 +459,83 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 		outside_tex[nOutsideTexCount++] = &in_tri.t[2];
 	}
 
-	//classify Triangle points, and break the input Triangle into smaller output Triangles if required and there are four possible outcomes...
+	// Now classify Triangle points, and break the input Triangle into
+	// smaller output Triangles if required. There are four possible
+	// outcomes...
 
 	if (nInsidePointCount == 0)
 	{
-		//all points lie on the outside of plane, so clip whole Triangle
-		return 0; //no returned Triangles are valid
+		// All points lie on the outside of plane, so clip whole Triangle
+		// It ceases to exist
+
+		return 0; // No returned Triangles are valid
 	}
 
 	if (nInsidePointCount == 3)
 	{
-		//all points lie on the inside of plane, so do nothing and allow the Triangle to simply pass through
+		// All points lie on the inside of plane, so do nothing
+		// and allow the Triangle to simply pass through
 		out_tri1 = in_tri;
 
-		return 1; //just the one returned original Triangle is valid
+		return 1; // Just the one returned original Triangle is valid
 	}
 
 	if (nInsidePointCount == 1 && nOutsidePointCount == 2)
 	{
-		//Triangle should be clipped. As two points lie outside the plane, the Triangle simply becomes a smaller Triangle
+		// Triangle should be clipped. As two points lie outside
+		// the plane, the Triangle simply becomes a smaller Triangle
 
-		//copy appearance info to new Triangle
+		// Copy appearance info to new Triangle
 		out_tri1.col = JenovaSpace::MAGENTA; // in_tri.col;
 
-		//the inside point is valid, so keep that
+		// The inside point is valid, so keep that...
 		out_tri1.p[0] = *inside_points[0];
 		out_tri1.t[0] = *inside_tex[0];
 
-		//but the two new points are at the locations where the original sides of the Triangle (lines) intersect with the plane
-		double t;
+		// but the two new points are at the locations where the
+		// original sides of the Triangle (lines) intersect with the plane
+		float t;
 		out_tri1.p[1] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0], t);
 		out_tri1.t[1].x = t * (outside_tex[0]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[1].y = t * (outside_tex[0]->y - inside_tex[0]->y) + inside_tex[0]->y;
+		out_tri1.t[1].z = t * (outside_tex[0]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
 		out_tri1.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[1], t);
 		out_tri1.t[2].x = t * (outside_tex[1]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[2].y = t * (outside_tex[1]->y - inside_tex[0]->y) + inside_tex[0]->y;
+		out_tri1.t[2].z = t * (outside_tex[1]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
-		return 1; //return the newly formed single Triangle
+		return 1; // Return the newly formed single Triangle
 	}
 
 	if (nInsidePointCount == 2 && nOutsidePointCount == 1)
 	{
-		//Triangle should be clipped. As two points lie inside the plane, the clipped Triangle becomes a "quad", fortunately, we can represent a quad with two new Triangles
+		// Triangle should be clipped. As two points lie inside the plane,
+		// the clipped Triangle becomes a "quad". Fortunately, we can
+		// represent a quad with two new Triangles
 
-		//copy appearance info to new Triangles
+		// Copy appearance info to new Triangles
 		out_tri1.col = JenovaSpace::GREEN; // in_tri.col;
 		out_tri2.col = JenovaSpace::RED;   // in_tri.col;
 
-		//the first Triangle consists of the two inside points and a new point determined by the location where one side of the Triangle intersects with the plane
+		// The first Triangle consists of the two inside points and a new
+		// point determined by the location where one side of the Triangle
+		// intersects with the plane
 		out_tri1.p[0] = *inside_points[0];
 		out_tri1.t[0] = *inside_tex[0];
 
 		out_tri1.p[1] = *inside_points[1];
 		out_tri1.t[1] = *inside_tex[1];
 
-		double t;
+		float t;
 		out_tri1.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[0], *outside_points[0], t);
 		out_tri1.t[2].x = t * (outside_tex[0]->x - inside_tex[0]->x) + inside_tex[0]->x;
 		out_tri1.t[2].y = t * (outside_tex[0]->y - inside_tex[0]->y) + inside_tex[0]->y;
+		out_tri1.t[2].z = t * (outside_tex[0]->z - inside_tex[0]->z) + inside_tex[0]->z;
 
-		//the second Triangle is composed of one of he inside points, a new point determined by the intersection of the other side of the Triangle and the plane, and the newly created point above
+		// The second Triangle is composed of one of he inside points, a
+		// new point determined by the intersection of the other side of the
+		// Triangle and the plane, and the newly created point above
 		out_tri2.p[1] = *inside_points[1];
 		out_tri2.t[1] = *inside_tex[1];
 		out_tri2.p[0] = out_tri1.p[2];
@@ -562,7 +543,8 @@ int JenovaSpace::GFX3D::Math::Triangle_ClipAgainstPlane(Vector3D plane_p, Vector
 		out_tri2.p[2] = Math::Vec_IntersectPlane(plane_p, plane_n, *inside_points[1], *outside_points[0], t);
 		out_tri2.t[2].x = t * (outside_tex[0]->x - inside_tex[1]->x) + inside_tex[1]->x;
 		out_tri2.t[2].y = t * (outside_tex[0]->y - inside_tex[1]->y) + inside_tex[1]->y;
-		return 2; //return two newly formed Triangles which form a quad
+		out_tri2.t[2].z = t * (outside_tex[0]->z - inside_tex[1]->z) + inside_tex[1]->z;
+		return 2; // Return two newly formed Triangles which form a quad
 	}
 
 	return 0;
@@ -578,11 +560,12 @@ void GFX3D::DrawTriangleWire(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Pix
 	pge->DrawTriangle(tri.p[0].x, tri.p[0].y, tri.p[1].x, tri.p[1].y, tri.p[2].x, tri.p[2].y, col);
 }
 
-void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
-							 int x2, int y2, double u2, double v2, double w2,
-							 int x3, int y3, double u3, double v3, double w3, JenovaSpace::Sprite *spr, bool affine)
+void GFX3D::TexturedTriangle(int x1, int y1, float u1, float v1, float w1,
+							 int x2, int y2, float u2, float v2, float w2,
+							 int x3, int y3, float u3, float v3, float w3, JenovaSpace::Sprite *spr,bool affine)
 
 {
+	///*
 	if (affine)
 	{
 		if (y2 < y1)
@@ -611,47 +594,47 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 
 		int dy1 = y2 - y1;
 		int dx1 = x2 - x1;
-		double dv1 = v2 - v1;
-		double du1 = u2 - u1;
+		float dv1 = v2 - v1;
+		float du1 = u2 - u1;
 
 		int dy2 = y3 - y1;
 		int dx2 = x3 - x1;
-		double dv2 = v3 - v1;
-		double du2 = u3 - u1;
+		float dv2 = v3 - v1;
+		float du2 = u3 - u1;
 
-		double tex_u, tex_v;
+		float tex_u, tex_v;
 
-		double dax_step = 0, dbx_step = 0,
-			   du1_step = 0, dv1_step = 0,
-			   du2_step = 0, dv2_step = 0;
-
-		if (dy1)
-			dax_step = dx1 / (double)abs(dy1);
-		if (dy2)
-			dbx_step = dx2 / (double)abs(dy2);
+		float dax_step = 0, dbx_step = 0,
+			  du1_step = 0, dv1_step = 0,
+			  du2_step = 0, dv2_step = 0;
 
 		if (dy1)
-			du1_step = du1 / (double)abs(dy1);
+			dax_step = dx1 / (float)abs(dy1);
+		if (dy2)
+			dbx_step = dx2 / (float)abs(dy2);
+
 		if (dy1)
-			dv1_step = dv1 / (double)abs(dy1);
+			du1_step = du1 / (float)abs(dy1);
+		if (dy1)
+			dv1_step = dv1 / (float)abs(dy1);
 
 		if (dy2)
-			du2_step = du2 / (double)abs(dy2);
+			du2_step = du2 / (float)abs(dy2);
 		if (dy2)
-			dv2_step = dv2 / (double)abs(dy2);
+			dv2_step = dv2 / (float)abs(dy2);
 
 		if (dy1)
 		{
 			for (int i = y1; i <= y2; i++)
 			{
-				int ax = x1 + (double)(i - y1) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
+				int ax = x1 + (float)(i - y1) * dax_step;
+				int bx = x1 + (float)(i - y1) * dbx_step;
 
-				double tex_su = u1 + (double)(i - y1) * du1_step;
-				double tex_sv = v1 + (double)(i - y1) * dv1_step;
+				float tex_su = u1 + (float)(i - y1) * du1_step;
+				float tex_sv = v1 + (float)(i - y1) * dv1_step;
 
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
+				float tex_eu = u1 + (float)(i - y1) * du2_step;
+				float tex_ev = v1 + (float)(i - y1) * dv2_step;
 
 				if (ax > bx)
 				{
@@ -662,8 +645,8 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 				tex_u = tex_su;
 				tex_v = tex_sv;
 
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
+				float tstep = 1.0f / ((float)(bx - ax));
+				float t = 0.0f;
 
 				for (int j = ax; j < bx; j++)
 				{
@@ -682,28 +665,28 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		du1 = u3 - u2;
 
 		if (dy1)
-			dax_step = dx1 / (double)abs(dy1);
+			dax_step = dx1 / (float)abs(dy1);
 		if (dy2)
-			dbx_step = dx2 / (double)abs(dy2);
+			dbx_step = dx2 / (float)abs(dy2);
 
 		du1_step = 0, dv1_step = 0;
 		if (dy1)
-			du1_step = du1 / (double)abs(dy1);
+			du1_step = du1 / (float)abs(dy1);
 		if (dy1)
-			dv1_step = dv1 / (double)abs(dy1);
+			dv1_step = dv1 / (float)abs(dy1);
 
 		if (dy1)
 		{
 			for (int i = y2; i <= y3; i++)
 			{
-				int ax = x2 + (double)(i - y2) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
+				int ax = x2 + (float)(i - y2) * dax_step;
+				int bx = x1 + (float)(i - y1) * dbx_step;
 
-				double tex_su = u2 + (double)(i - y2) * du1_step;
-				double tex_sv = v2 + (double)(i - y2) * dv1_step;
+				float tex_su = u2 + (float)(i - y2) * du1_step;
+				float tex_sv = v2 + (float)(i - y2) * dv1_step;
 
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
+				float tex_eu = u1 + (float)(i - y1) * du2_step;
+				float tex_ev = v1 + (float)(i - y1) * dv2_step;
 
 				if (ax > bx)
 				{
@@ -715,8 +698,8 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 				tex_u = tex_su;
 				tex_v = tex_sv;
 
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
+				float tstep = 1.0f / ((float)(bx - ax));
+				float t = 0.0f;
 
 				for (int j = ax; j < bx; j++)
 				{
@@ -730,6 +713,7 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 			}
 		}
 	}
+	//*/
 	else
 	{
 		if (y2 < y1)
@@ -761,56 +745,56 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 
 		int dy1 = y2 - y1;
 		int dx1 = x2 - x1;
-		double dv1 = v2 - v1;
-		double du1 = u2 - u1;
-		double dw1 = w2 - w1;
+		float dv1 = v2 - v1;
+		float du1 = u2 - u1;
+		float dw1 = w2 - w1;
 
 		int dy2 = y3 - y1;
 		int dx2 = x3 - x1;
-		double dv2 = v3 - v1;
-		double du2 = u3 - u1;
-		double dw2 = w3 - w1;
+		float dv2 = v3 - v1;
+		float du2 = u3 - u1;
+		float dw2 = w3 - w1;
 
-		double tex_u, tex_v, tex_w;
+		float tex_u, tex_v, tex_w;
 
-		double dax_step = 0, dbx_step = 0,
+		float dax_step = 0, dbx_step = 0,
 			  du1_step = 0, dv1_step = 0,
 			  du2_step = 0, dv2_step = 0,
 			  dw1_step = 0, dw2_step = 0;
 
 		if (dy1)
-			dax_step = dx1 / (double)abs(dy1);
+			dax_step = dx1 / (float)abs(dy1);
 		if (dy2)
-			dbx_step = dx2 / (double)abs(dy2);
+			dbx_step = dx2 / (float)abs(dy2);
 
 		if (dy1)
-			du1_step = du1 / (double)abs(dy1);
+			du1_step = du1 / (float)abs(dy1);
 		if (dy1)
-			dv1_step = dv1 / (double)abs(dy1);
+			dv1_step = dv1 / (float)abs(dy1);
 		if (dy1)
-			dw1_step = dw1 / (double)abs(dy1);
+			dw1_step = dw1 / (float)abs(dy1);
 
 		if (dy2)
-			du2_step = du2 / (double)abs(dy2);
+			du2_step = du2 / (float)abs(dy2);
 		if (dy2)
-			dv2_step = dv2 / (double)abs(dy2);
+			dv2_step = dv2 / (float)abs(dy2);
 		if (dy2)
-			dw2_step = dw2 / (double)abs(dy2);
+			dw2_step = dw2 / (float)abs(dy2);
 
 		if (dy1)
 		{
 			for (int i = y1; i <= y2; i++)
 			{
-				int ax = x1 + (double)(i - y1) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
+				int ax = x1 + (float)(i - y1) * dax_step;
+				int bx = x1 + (float)(i - y1) * dbx_step;
 
-				double tex_su = u1 + (double)(i - y1) * du1_step;
-				double tex_sv = v1 + (double)(i - y1) * dv1_step;
-				double tex_sw = w1 + (double)(i - y1) * dw1_step;
+				float tex_su = u1 + (float)(i - y1) * du1_step;
+				float tex_sv = v1 + (float)(i - y1) * dv1_step;
+				float tex_sw = w1 + (float)(i - y1) * dw1_step;
 
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
-				double tex_ew = w1 + (double)(i - y1) * dw2_step;
+				float tex_eu = u1 + (float)(i - y1) * du2_step;
+				float tex_ev = v1 + (float)(i - y1) * dv2_step;
+				float tex_ew = w1 + (float)(i - y1) * dw2_step;
 
 				if (ax > bx)
 				{
@@ -824,14 +808,14 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 				tex_v = tex_sv;
 				tex_w = tex_sw;
 
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
+				float tstep = 1.0 / ((float)(bx - ax));
+				float t = 0.0;
 
 				for (int j = ax; j < bx; j++)
 				{
-					tex_u = (1.0f - t) * tex_su + t * tex_eu;
-					tex_v = (1.0f - t) * tex_sv + t * tex_ev;
-					tex_w = (1.0f - t) * tex_sw + t * tex_ew;
+					tex_u = (1.0 - t) * tex_su + t * tex_eu;
+					tex_v = (1.0 - t) * tex_sv + t * tex_ev;
+					tex_w = (1.0 - t) * tex_sw + t * tex_ew;
 					if (tex_w > m_DepthBuffer[i * pge->ScreenWidth() + j])
 					{
 						pge->Draw(j, i, spr->Sample(tex_u / tex_w, tex_v / tex_w));
@@ -849,32 +833,32 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 		dw1 = w3 - w2;
 
 		if (dy1)
-			dax_step = dx1 / (double)abs(dy1);
+			dax_step = dx1 / (float)abs(dy1);
 		if (dy2)
-			dbx_step = dx2 / (double)abs(dy2);
+			dbx_step = dx2 / (float)abs(dy2);
 
 		du1_step = 0, dv1_step = 0;
 		if (dy1)
-			du1_step = du1 / (double)abs(dy1);
+			du1_step = du1 / (float)abs(dy1);
 		if (dy1)
-			dv1_step = dv1 / (double)abs(dy1);
+			dv1_step = dv1 / (float)abs(dy1);
 		if (dy1)
-			dw1_step = dw1 / (double)abs(dy1);
+			dw1_step = dw1 / (float)abs(dy1);
 
 		if (dy1)
 		{
 			for (int i = y2; i <= y3; i++)
 			{
-				int ax = x2 + (double)(i - y2) * dax_step;
-				int bx = x1 + (double)(i - y1) * dbx_step;
+				int ax = x2 + (float)(i - y2) * dax_step;
+				int bx = x1 + (float)(i - y1) * dbx_step;
 
-				double tex_su = u2 + (double)(i - y2) * du1_step;
-				double tex_sv = v2 + (double)(i - y2) * dv1_step;
-				double tex_sw = w2 + (double)(i - y2) * dw1_step;
+				float tex_su = u2 + (float)(i - y2) * du1_step;
+				float tex_sv = v2 + (float)(i - y2) * dv1_step;
+				float tex_sw = w2 + (float)(i - y2) * dw1_step;
 
-				double tex_eu = u1 + (double)(i - y1) * du2_step;
-				double tex_ev = v1 + (double)(i - y1) * dv2_step;
-				double tex_ew = w1 + (double)(i - y1) * dw2_step;
+				float tex_eu = u1 + (float)(i - y1) * du2_step;
+				float tex_ev = v1 + (float)(i - y1) * dv2_step;
+				float tex_ew = w1 + (float)(i - y1) * dw2_step;
 
 				if (ax > bx)
 				{
@@ -888,14 +872,14 @@ void GFX3D::TexturedTriangle(int x1, int y1, double u1, double v1, double w1,
 				tex_v = tex_sv;
 				tex_w = tex_sw;
 
-				double tstep = 1.0f / ((double)(bx - ax));
-				double t = 0.0f;
+				float tstep = 1.0 / ((float)(bx - ax));
+				float t = 0.0;
 
 				for (int j = ax; j < bx; j++)
 				{
-					tex_u = (1.0f - t) * tex_su + t * tex_eu;
-					tex_v = (1.0f - t) * tex_sv + t * tex_ev;
-					tex_w = (1.0f - t) * tex_sw + t * tex_ew;
+					tex_u = (1.0 - t) * tex_su + t * tex_eu;
+					tex_v = (1.0 - t) * tex_sv + t * tex_ev;
+					tex_w = (1.0 - t) * tex_sw + t * tex_ew;
 
 					if (tex_w > m_DepthBuffer[i * pge->ScreenWidth() + j])
 					{
@@ -917,6 +901,7 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[0].x, tri.p[1].x);
 		std::swap(tri.t[0].x, tri.t[1].x);
 		std::swap(tri.t[0].y, tri.t[1].y);
+		std::swap(tri.t[0].z, tri.t[1].z);
 	}
 
 	if (tri.p[2].y < tri.p[0].y)
@@ -925,6 +910,7 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[0].x, tri.p[2].x);
 		std::swap(tri.t[0].x, tri.t[2].x);
 		std::swap(tri.t[0].y, tri.t[2].y);
+		std::swap(tri.t[0].z, tri.t[2].z);
 	}
 
 	if (tri.p[2].y < tri.p[1].y)
@@ -933,37 +919,44 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 		std::swap(tri.p[1].x, tri.p[2].x);
 		std::swap(tri.t[1].x, tri.t[2].x);
 		std::swap(tri.t[1].y, tri.t[2].y);
+		std::swap(tri.t[1].z, tri.t[2].z);
 	}
 
 	int dy1 = tri.p[1].y - tri.p[0].y;
 	int dx1 = tri.p[1].x - tri.p[0].x;
-	double dv1 = tri.t[1].y - tri.t[0].y;
-	double du1 = tri.t[1].x - tri.t[0].x;
+	float dv1 = tri.t[1].y - tri.t[0].y;
+	float du1 = tri.t[1].x - tri.t[0].x;
+	float dz1 = tri.t[1].z - tri.t[0].z;
 
 	int dy2 = tri.p[2].y - tri.p[0].y;
 	int dx2 = tri.p[2].x - tri.p[0].x;
-	double dv2 = tri.t[2].y - tri.t[0].y;
-	double du2 = tri.t[2].x - tri.t[0].x;
+	float dv2 = tri.t[2].y - tri.t[0].y;
+	float du2 = tri.t[2].x - tri.t[0].x;
+	float dz2 = tri.t[2].z - tri.t[0].z;
 
-	double tex_x, tex_y;
+	float tex_x, tex_y, tex_z;
 
-	double du1_step = 0, dv1_step = 0, du2_step = 0, dv2_step = 0, dz1_step = 0, dz2_step = 0;
-	double dax_step = 0, dbx_step = 0;
-
-	if (dy1)
-		dax_step = dx1 / (double)abs(dy1);
-	if (dy2)
-		dbx_step = dx2 / (double)abs(dy2);
+	float du1_step = 0, dv1_step = 0, du2_step = 0, dv2_step = 0, dz1_step = 0, dz2_step = 0;
+	float dax_step = 0, dbx_step = 0;
 
 	if (dy1)
-		du1_step = du1 / (double)abs(dy1);
+		dax_step = dx1 / (float)abs(dy1);
+	if (dy2)
+		dbx_step = dx2 / (float)abs(dy2);
+
 	if (dy1)
-		dv1_step = dv1 / (double)abs(dy1);
+		du1_step = du1 / (float)abs(dy1);
+	if (dy1)
+		dv1_step = dv1 / (float)abs(dy1);
+	if (dy1)
+		dz1_step = dz1 / (float)abs(dy1);
 
 	if (dy2)
-		du2_step = du2 / (double)abs(dy2);
+		du2_step = du2 / (float)abs(dy2);
 	if (dy2)
-		dv2_step = dv2 / (double)abs(dy2);
+		dv2_step = dv2 / (float)abs(dy2);
+	if (dy2)
+		dz2_step = dz2 / (float)abs(dy2);
 
 	if (dy1)
 	{
@@ -973,32 +966,40 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			int bx = tri.p[0].x + (i - tri.p[0].y) * dbx_step;
 
 			// Start and end points in texture space
-			double tex_su = tri.t[0].x + (double)(i - tri.p[0].y) * du1_step;
-			double tex_sv = tri.t[0].y + (double)(i - tri.p[0].y) * dv1_step;
+			float tex_su = tri.t[0].x + (float)(i - tri.p[0].y) * du1_step;
+			float tex_sv = tri.t[0].y + (float)(i - tri.p[0].y) * dv1_step;
+			float tex_sz = tri.t[0].z + (float)(i - tri.p[0].y) * dz1_step;
 
-			double tex_eu = tri.t[0].x + (double)(i - tri.p[0].y) * du2_step;
-			double tex_ev = tri.t[0].y + (double)(i - tri.p[0].y) * dv2_step;
+			float tex_eu = tri.t[0].x + (float)(i - tri.p[0].y) * du2_step;
+			float tex_ev = tri.t[0].y + (float)(i - tri.p[0].y) * dv2_step;
+			float tex_ez = tri.t[0].z + (float)(i - tri.p[0].y) * dz2_step;
 
 			if (ax > bx)
 			{
 				std::swap(ax, bx);
 				std::swap(tex_su, tex_eu);
 				std::swap(tex_sv, tex_ev);
+				std::swap(tex_sz, tex_ez);
 			}
 
 			tex_x = tex_su;
 			tex_y = tex_sv;
+			tex_z = tex_sz;
 
-			double tstep = 1.0f / ((double)(bx - ax));
-			double t = 0;
+			float tstep = 1.0 / ((float)(bx - ax));
+			float t = 0;
 
 			for (int j = ax; j < bx; j++)
 			{
-				tex_x = (1.0f - t) * tex_su + t * tex_eu;
-				tex_y = (1.0f - t) * tex_sv + t * tex_ev;
+				tex_x = (1.0 - t) * tex_su + t * tex_eu;
+				tex_y = (1.0 - t) * tex_sv + t * tex_ev;
+				tex_z = (1.0 - t) * tex_sz + t * tex_ez;
 
-				pge->Draw(j, i, spr->Sample(tex_x, tex_y));
-
+				if (tex_z > m_DepthBuffer[i * pge->ScreenWidth() + j])
+				{
+					pge->Draw(j, i, spr->Sample(tex_x / tex_z, tex_y / tex_z));
+					m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_z;
+				}
 				t += tstep;
 			}
 		}
@@ -1008,17 +1009,20 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 	dx1 = tri.p[2].x - tri.p[1].x;
 	dv1 = tri.t[2].y - tri.t[1].y;
 	du1 = tri.t[2].x - tri.t[1].x;
+	dz1 = tri.t[2].z - tri.t[1].z;
 
 	if (dy1)
-		dax_step = dx1 / (double)abs(dy1);
+		dax_step = dx1 / (float)abs(dy1);
 	if (dy2)
-		dbx_step = dx2 / (double)abs(dy2);
+		dbx_step = dx2 / (float)abs(dy2);
 
 	du1_step = 0, dv1_step = 0; // , dz1_step = 0;// , du2_step = 0, dv2_step = 0;
 	if (dy1)
-		du1_step = du1 / (double)abs(dy1);
+		du1_step = du1 / (float)abs(dy1);
 	if (dy1)
-		dv1_step = dv1 / (double)abs(dy1);
+		dv1_step = dv1 / (float)abs(dy1);
+	if (dy1)
+		dz1_step = dz1 / (float)abs(dy1);
 
 	if (dy1)
 	{
@@ -1027,32 +1031,41 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 			int ax = tri.p[1].x + (i - tri.p[1].y) * dax_step;
 			int bx = tri.p[0].x + (i - tri.p[0].y) * dbx_step;
 
-			//start and end points in texture space
-			double tex_su = tri.t[1].x + (double)(i - tri.p[1].y) * du1_step;
-			double tex_sv = tri.t[1].y + (double)(i - tri.p[1].y) * dv1_step;
+			// Start and end points in texture space
+			float tex_su = tri.t[1].x + (float)(i - tri.p[1].y) * du1_step;
+			float tex_sv = tri.t[1].y + (float)(i - tri.p[1].y) * dv1_step;
+			float tex_sz = tri.t[1].z + (float)(i - tri.p[1].y) * dz1_step;
 
-			double tex_eu = tri.t[0].x + (double)(i - tri.p[0].y) * du2_step;
-			double tex_ev = tri.t[0].y + (double)(i - tri.p[0].y) * dv2_step;
+			float tex_eu = tri.t[0].x + (float)(i - tri.p[0].y) * du2_step;
+			float tex_ev = tri.t[0].y + (float)(i - tri.p[0].y) * dv2_step;
+			float tex_ez = tri.t[0].z + (float)(i - tri.p[0].y) * dz2_step;
 
 			if (ax > bx)
 			{
 				std::swap(ax, bx);
 				std::swap(tex_su, tex_eu);
 				std::swap(tex_sv, tex_ev);
+				std::swap(tex_sz, tex_ez);
 			}
 
 			tex_x = tex_su;
 			tex_y = tex_sv;
+			tex_z = tex_sz;
 
-			double tstep = 1.0f / ((double)(bx - ax));
-			double t = 0;
+			float tstep = 1.0 / ((float)(bx - ax));
+			float t = 0;
 
 			for (int j = ax; j < bx; j++)
 			{
-				tex_x = (1.0f - t) * tex_su + t * tex_eu;
-				tex_y = (1.0f - t) * tex_sv + t * tex_ev;
+				tex_x = (1.0 - t) * tex_su + t * tex_eu;
+				tex_y = (1.0 - t) * tex_sv + t * tex_ev;
+				tex_z = (1.0 - t) * tex_sz + t * tex_ez;
 
-				pge->Draw(j, i, spr->Sample(tex_x, tex_y));
+				if (tex_z > m_DepthBuffer[i * pge->ScreenWidth() + j])
+				{
+					pge->Draw(j, i, spr->Sample(tex_x / tex_z, tex_y / tex_z));
+					m_DepthBuffer[i * pge->ScreenWidth() + j] = tex_z;
+				}
 
 				t += tstep;
 			}
@@ -1060,29 +1073,33 @@ void GFX3D::DrawTriangleTex(JenovaSpace::GFX3D::Triangle &tri, JenovaSpace::Spri
 	}
 }
 
-double *GFX3D::m_DepthBuffer = nullptr;
+float *GFX3D::m_DepthBuffer = nullptr;
 
 void GFX3D::ConfigureDisplay()
 {
-	m_DepthBuffer = new double[pge->ScreenWidth() * pge->ScreenHeight()]{0};
+	m_DepthBuffer = new float[pge->ScreenWidth() * pge->ScreenHeight()]{0};
 }
 
 void GFX3D::ClearDepth()
 {
-	memset(m_DepthBuffer, 0, pge->ScreenWidth() * pge->ScreenHeight() * sizeof(double));
+	memset(m_DepthBuffer, 0, pge->ScreenWidth() * pge->ScreenHeight() * sizeof(float));
 }
 
 GFX3D::PipeLine::PipeLine()
 {
 }
 
-void GFX3D::PipeLine::SetProjection(double fFovDegrees, double fAspectRatio, double fNear, double fFar, double fLeft, double fTop, double fWidth, double fHeight)
+void GFX3D::PipeLine::SetProjection(float fFovDegrees, float fAspectRatio, float fNear, float fFar, float fLeft, float fTop, float fWidth, float fHeight)
 {
 	matProj = GFX3D::Math::Mat_MakeProjection(fFovDegrees, fAspectRatio, fNear, fFar);
 	fViewX = fLeft;
 	fViewY = fTop;
 	fViewW = fWidth;
 	fViewH = fHeight;
+}
+void GFX3D::PipeLine::SetTextureMappingMode(bool affineMode)
+{
+	affine = affineMode;
 }
 
 void GFX3D::PipeLine::SetCamera(JenovaSpace::GFX3D::Vector3D &pos, JenovaSpace::GFX3D::Vector3D &lookat, JenovaSpace::GFX3D::Vector3D &up)
@@ -1105,8 +1122,9 @@ void GFX3D::PipeLine::SetLightSource(JenovaSpace::GFX3D::Vector3D &pos, JenovaSp
 {
 }
 
-uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, bool affine, uint32_t flags)
+uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Triangles, uint32_t flags)
 {
+	///*
 	if (affine)
 	{
 		//calculate Transformation Matrix
@@ -1230,7 +1248,7 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Tria
 							triRaster.p[0].y *= -1.0f;
 							triRaster.p[1].y *= -1.0f;
 							triRaster.p[2].y *= -1.0f;
-							*/
+					*/
 					Vector3D vOffsetView = {1, 1, 0};
 					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
 					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
@@ -1271,195 +1289,194 @@ uint32_t GFX3D::PipeLine::Render(std::vector<JenovaSpace::GFX3D::Triangle> &Tria
 				}
 			}
 		}
-
 		return nTriangleDrawnCount;
 	}
-	else
+	//*/
+
+	// Calculate Transformation Matrix
+	Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
+	//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
+
+	// Store Triangles for rastering later
+	std::vector<GFX3D::Triangle> vecTrianglesToRaster;
+
+	int nTriangleDrawnCount = 0;
+
+	// Process Triangles
+	for (auto &tri : Triangles)
 	{
-		// Calculate Transformation Matrix
-		Matrix4x4 matWorldView = Math::Mat_MultiplyMatrix(matWorld, matView);
-		//matWorldViewProj = Math::Mat_MultiplyMatrix(matWorldView, matProj);
+		GFX3D::Triangle triTransformed;
 
-		// Store triangles for rastering later
-		std::vector<GFX3D::Triangle> vecTrianglesToRaster;
+		// Just copy through texture coordinates
+		triTransformed.t[0] = {tri.t[0].x, tri.t[0].y, tri.t[0].z};
+		triTransformed.t[1] = {tri.t[1].x, tri.t[1].y, tri.t[1].z};
+		triTransformed.t[2] = {tri.t[2].x, tri.t[2].y, tri.t[2].z}; // Think!
 
-		int nTriangleDrawnCount = 0;
+		// Transform Triangle from object into projected space
+		triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
+		triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
+		triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
 
-		// Process Triangles
-		for (auto &tri : Triangles)
+		// Calculate Triangle Normal in WorldView Space
+		GFX3D::Vector3D normal, line1, line2;
+		line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
+		line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
+		normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
+		normal = GFX3D::Math::Vec_Normalise(normal);
+
+		// Cull Triangles that face away from viewer
+		if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
+			continue;
+		if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
+			continue;
+
+		// If Lighting, calculate shading
+		triTransformed.col = JenovaSpace::WHITE;
+
+		// Clip Triangle against near plane
+		int nClippedTriangles = 0;
+		Triangle clipped[2];
+		nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
+
+		// This may yield two new Triangles
+		for (int n = 0; n < nClippedTriangles; n++)
 		{
-			GFX3D::Triangle triTransformed;
+			Triangle triProjected = clipped[n];
 
-			// Just copy through texture coordinates
-			triTransformed.t[0] = {tri.t[0].x, tri.t[0].y, tri.t[0].z};
-			triTransformed.t[1] = {tri.t[1].x, tri.t[1].y, tri.t[1].z};
-			triTransformed.t[2] = {tri.t[2].x, tri.t[2].y, tri.t[2].z}; // Think!
+			// Project new Triangle
+			triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
+			triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
+			triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
 
-			// Transform Triangle from object into projected space
-			triTransformed.p[0] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[0]);
-			triTransformed.p[1] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[1]);
-			triTransformed.p[2] = GFX3D::Math::Mat_MultiplyVector(matWorldView, tri.p[2]);
+			// Apply Projection to Verts
+			triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
+			triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
+			triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
 
-			// Calculate Triangle Normal in WorldView Space
-			GFX3D::Vector3D normal, line1, line2;
-			line1 = GFX3D::Math::Vec_Sub(triTransformed.p[1], triTransformed.p[0]);
-			line2 = GFX3D::Math::Vec_Sub(triTransformed.p[2], triTransformed.p[0]);
-			normal = GFX3D::Math::Vec_CrossProduct(line1, line2);
-			normal = GFX3D::Math::Vec_Normalise(normal);
+			triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
+			triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
+			triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
 
-			// Cull triangles that face away from viewer
-			if (flags & RENDER_CULL_CW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) > 0.0f)
-				continue;
-			if (flags & RENDER_CULL_CCW && GFX3D::Math::Vec_DotProduct(normal, triTransformed.p[0]) < 0.0f)
-				continue;
+			triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
+			triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
+			triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
 
-			// If Lighting, calculate shading
-			triTransformed.col = JenovaSpace::WHITE;
+			// Apply Projection to Tex coords
+			triProjected.t[0].x = triProjected.t[0].x / triProjected.p[0].w;
+			triProjected.t[1].x = triProjected.t[1].x / triProjected.p[1].w;
+			triProjected.t[2].x = triProjected.t[2].x / triProjected.p[2].w;
 
-			// Clip Triangle against near plane
-			int nClippedTriangles = 0;
-			Triangle clipped[2];
-			nClippedTriangles = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, 0.0f, 0.1f}, {0.0f, 0.0f, 1.0f}, triTransformed, clipped[0], clipped[1]);
+			triProjected.t[0].y = triProjected.t[0].y / triProjected.p[0].w;
+			triProjected.t[1].y = triProjected.t[1].y / triProjected.p[1].w;
+			triProjected.t[2].y = triProjected.t[2].y / triProjected.p[2].w;
 
-			// This may yield two new triangles
-			for (int n = 0; n < nClippedTriangles; n++)
+			triProjected.t[0].z = 1.0f / triProjected.p[0].w;
+			triProjected.t[1].z = 1.0f / triProjected.p[1].w;
+			triProjected.t[2].z = 1.0f / triProjected.p[2].w;
+
+			// Clip against viewport in screen space
+			// Clip Triangles against all four screen edges, this could yield
+			// a bunch of Triangles, so create a queue that we traverse to
+			//  ensure we only test new Triangles generated against planes
+			Triangle sclipped[2];
+			std::list<Triangle> listTriangles;
+
+			// Add initial Triangle
+			listTriangles.push_back(triProjected);
+			int nNewTriangles = 1;
+
+			for (int p = 0; p < 4; p++)
 			{
-				Triangle triProjected = clipped[n];
-
-				// Project new triangle
-				triProjected.p[0] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[0]);
-				triProjected.p[1] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[1]);
-				triProjected.p[2] = GFX3D::Math::Mat_MultiplyVector(matProj, clipped[n].p[2]);
-
-				// Apply Projection to Verts
-				triProjected.p[0].x = triProjected.p[0].x / triProjected.p[0].w;
-				triProjected.p[1].x = triProjected.p[1].x / triProjected.p[1].w;
-				triProjected.p[2].x = triProjected.p[2].x / triProjected.p[2].w;
-
-				triProjected.p[0].y = triProjected.p[0].y / triProjected.p[0].w;
-				triProjected.p[1].y = triProjected.p[1].y / triProjected.p[1].w;
-				triProjected.p[2].y = triProjected.p[2].y / triProjected.p[2].w;
-
-				triProjected.p[0].z = triProjected.p[0].z / triProjected.p[0].w;
-				triProjected.p[1].z = triProjected.p[1].z / triProjected.p[1].w;
-				triProjected.p[2].z = triProjected.p[2].z / triProjected.p[2].w;
-
-				// Apply Projection to Tex coords
-				triProjected.t[0].x = triProjected.t[0].x / triProjected.p[0].w;
-				triProjected.t[1].x = triProjected.t[1].x / triProjected.p[1].w;
-				triProjected.t[2].x = triProjected.t[2].x / triProjected.p[2].w;
-
-				triProjected.t[0].y = triProjected.t[0].y / triProjected.p[0].w;
-				triProjected.t[1].y = triProjected.t[1].y / triProjected.p[1].w;
-				triProjected.t[2].y = triProjected.t[2].y / triProjected.p[2].w;
-
-				triProjected.t[0].z = 1.0f / triProjected.p[0].w;
-				triProjected.t[1].z = 1.0f / triProjected.p[1].w;
-				triProjected.t[2].z = 1.0f / triProjected.p[2].w;
-
-				// Clip against viewport in screen space
-				// Clip triangles against all four screen edges, this could yield
-				// a bunch of triangles, so create a queue that we traverse to
-				//  ensure we only test new triangles generated against planes
-				Triangle sclipped[2];
-				std::list<Triangle> listTriangles;
-
-				// Add initial triangle
-				listTriangles.push_back(triProjected);
-				int nNewTriangles = 1;
-
-				for (int p = 0; p < 4; p++)
+				int nTrisToAdd = 0;
+				while (nNewTriangles > 0)
 				{
-					int nTrisToAdd = 0;
-					while (nNewTriangles > 0)
+					// Take Triangle from front of queue
+					Triangle test = listTriangles.front();
+					listTriangles.pop_front();
+					nNewTriangles--;
+
+					// Clip it against a plane. We only need to test each
+					// subsequent plane, against subsequent new Triangles
+					// as all Triangles after a plane clip are guaranteed
+					// to lie on the inside of the plane. I like how this
+					// comment is almost completely and utterly justified
+					switch (p)
 					{
-						// Take Triangle from front of queue
-						Triangle test = listTriangles.front();
-						listTriangles.pop_front();
-						nNewTriangles--;
-
-						// Clip it against a plane. We only need to test each
-						// subsequent plane, against subsequent new triangles
-						// as all triangles after a plane clip are guaranteed
-						// to lie on the inside of the plane. I like how this
-						// comment is almost completely and utterly justified
-						switch (p)
-						{
-						case 0:
-							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-							break;
-						case 1:
-							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-							break;
-						case 2:
-							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-							break;
-						case 3:
-							nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
-							break;
-						}
-
-						// Clipping may yield a variable number of triangles, so
-						// add these new ones to the back of the queue for subsequent
-						// clipping against next planes
-						for (int w = 0; w < nTrisToAdd; w++)
-							listTriangles.push_back(sclipped[w]);
+					case 0:
+						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+						break;
+					case 1:
+						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({0.0f, +1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+						break;
+					case 2:
+						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+						break;
+					case 3:
+						nTrisToAdd = GFX3D::Math::Triangle_ClipAgainstPlane({+1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, sclipped[0], sclipped[1]);
+						break;
 					}
-					nNewTriangles = listTriangles.size();
+
+					// Clipping may yield a variable number of Triangles, so
+					// add these new ones to the back of the queue for subsequent
+					// clipping against next planes
+					for (int w = 0; w < nTrisToAdd; w++)
+						listTriangles.push_back(sclipped[w]);
+				}
+				nNewTriangles = listTriangles.size();
+			}
+
+			for (auto &triRaster : listTriangles)
+			{
+				// Scale to viewport
+				/*triRaster.p[0].x *= -1.0f;
+					triRaster.p[1].x *= -1.0f;
+					triRaster.p[2].x *= -1.0f;
+					triRaster.p[0].y *= -1.0f;
+					triRaster.p[1].y *= -1.0f;
+					triRaster.p[2].y *= -1.0f;*/
+				Vector3D vOffsetView = {1, 1, 0};
+				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+				triRaster.p[0].x *= 0.5f * fViewW;
+				triRaster.p[0].y *= 0.5f * fViewH;
+				triRaster.p[1].x *= 0.5f * fViewW;
+				triRaster.p[1].y *= 0.5f * fViewH;
+				triRaster.p[2].x *= 0.5f * fViewW;
+				triRaster.p[2].y *= 0.5f * fViewH;
+				vOffsetView = {fViewX, fViewY, 0};
+				triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
+				triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
+				triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
+
+				// For now, just draw Triangle
+
+				if (flags & RENDER_TEXTURED)
+				{
+					TexturedTriangle(
+						triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
+						triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
+						triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
+						sprTexture, affine);
 				}
 
-				for (auto &triRaster : listTriangles)
+				if (flags & RENDER_WIRE)
 				{
-					// Scale to viewport
-					/*triRaster.p[0].x *= -1.0f;
-						triRaster.p[1].x *= -1.0f;
-						triRaster.p[2].x *= -1.0f;
-						triRaster.p[0].y *= -1.0f;
-						triRaster.p[1].y *= -1.0f;
-						triRaster.p[2].y *= -1.0f;*/
-					Vector3D vOffsetView = {1, 1, 0};
-					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
-					triRaster.p[0].x *= 0.5f * fViewW;
-					triRaster.p[0].y *= 0.5f * fViewH;
-					triRaster.p[1].x *= 0.5f * fViewW;
-					triRaster.p[1].y *= 0.5f * fViewH;
-					triRaster.p[2].x *= 0.5f * fViewW;
-					triRaster.p[2].y *= 0.5f * fViewH;
-					vOffsetView = {fViewX, fViewY, 0};
-					triRaster.p[0] = Math::Vec_Add(triRaster.p[0], vOffsetView);
-					triRaster.p[1] = Math::Vec_Add(triRaster.p[1], vOffsetView);
-					triRaster.p[2] = Math::Vec_Add(triRaster.p[2], vOffsetView);
-
-					// For now, just draw triangle
-
-					if (flags & RENDER_TEXTURED)
-					{
-						TexturedTriangle(
-							triRaster.p[0].x, triRaster.p[0].y, triRaster.t[0].x, triRaster.t[0].y, triRaster.t[0].z,
-							triRaster.p[1].x, triRaster.p[1].y, triRaster.t[1].x, triRaster.t[1].y, triRaster.t[1].z,
-							triRaster.p[2].x, triRaster.p[2].y, triRaster.t[2].x, triRaster.t[2].y, triRaster.t[2].z,
-							sprTexture, false);
-					}
-
-					if (flags & RENDER_WIRE)
-					{
-						DrawTriangleWire(triRaster, JenovaSpace::RED);
-					}
-
-					if (flags & RENDER_FLAT)
-					{
-						DrawTriangleFlat(triRaster);
-					}
-
-					nTriangleDrawnCount++;
+					DrawTriangleWire(triRaster, JenovaSpace::RED);
 				}
+
+				if (flags & RENDER_FLAT)
+				{
+					DrawTriangleFlat(triRaster);
+				}
+
+				nTriangleDrawnCount++;
 			}
 		}
-
-		return nTriangleDrawnCount;
 	}
+
+	return nTriangleDrawnCount;
 }
-} //namespace JenovaSpace
+} // namespace JenovaSpace
+
 #endif

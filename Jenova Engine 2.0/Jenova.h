@@ -119,13 +119,13 @@ namespace JenovaSpace
 	template<class T> inline v2d_generic<T> operator * (const double& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs * rhs.x, lhs * rhs.y); }
 	template<class T> inline v2d_generic<T> operator * (const float& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs * rhs.x, lhs * rhs.y); }
 	template<class T> inline v2d_generic<T> operator * (const int& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs * rhs.x, lhs * rhs.y); }
-	template<class T> inline v2d_generic<T> operator / (const double& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs / rhs.x, lhs / rhs.y); }
 	template<class T> inline v2d_generic<T> operator / (const float& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs / rhs.x, lhs / rhs.y); }
+	template<class T> inline v2d_generic<T> operator / (const double& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs / rhs.x, lhs / rhs.y); }
 	template<class T> inline v2d_generic<T> operator / (const int& lhs, const v2d_generic<T>& rhs) { return v2d_generic<T>(lhs / rhs.x, lhs / rhs.y); }
 
 	typedef v2d_generic<int> vi2d;
-	typedef v2d_generic<double> vf2d;
-	typedef v2d_generic<double> vd2d;
+	typedef v2d_generic<float> vf2d;
+	typedef v2d_generic<float> vd2d;
 
 
 	struct HWButton
@@ -186,8 +186,8 @@ namespace JenovaSpace
 		Pixel GetPixel(int32_t x, int32_t y);
 		bool  SetPixel(int32_t x, int32_t y, Pixel p);
 
-		Pixel Sample(double x, double y);
-		Pixel SampleBL(double u, double v);
+		Pixel Sample(float x, float y);
+		Pixel SampleBL(float u, float v);
 		Pixel* GetData();
 
 	private:
@@ -229,7 +229,7 @@ namespace JenovaSpace
 		//called once on application startup, use to load your resources
 		virtual bool OnUserCreate();
 		//called every frame, and provides you with a time per frame value
-		virtual bool OnUserUpdate(double fElapsedTime);
+		virtual bool OnUserUpdate(float fElapsedTime);
 		//called once on application termination, so you can be a clean coder
 		virtual bool OnUserDestroy();
 
@@ -272,9 +272,9 @@ namespace JenovaSpace
 		//use a custom blend function
 		void SetPixelMode(std::function<JenovaSpace::Pixel(const int x, const int y, const JenovaSpace::Pixel& pSource, const JenovaSpace::Pixel& pDest)> pixelMode);
 		//change the blend factor form between 0.0f to 1.0f;
-		void SetPixelBlend(double fBlend);
+		void SetPixelBlend(float fBlend);
 		//offset texels by sub-pixel amount (advanced, do not use)
-		void SetSubPixelOffset(double ox, double oy);
+		void SetSubPixelOffset(float ox, float oy);
 
 		//draws a single Pixel
 		virtual bool Draw(int32_t x, int32_t y, Pixel p = JenovaSpace::WHITE);
@@ -309,7 +309,7 @@ namespace JenovaSpace
 		Sprite		*pDefaultDrawTarget = nullptr;
 		Sprite		*pDrawTarget = nullptr;
 		Pixel::Mode	nPixelMode = Pixel::NORMAL;
-		double		fBlendFactor = 1.0f;
+		float		fBlendFactor = 1.0f;
 		uint32_t	nScreenWidth = 256;
 		uint32_t	nScreenHeight = 240;
 		uint32_t	nPixelWidth = 4;
@@ -327,13 +327,13 @@ namespace JenovaSpace
 		int32_t		nViewW = 0;
 		int32_t		nViewH = 0;
 		bool		bFullScreen = false;
-		double		fPixelX = 1.0f;
-		double		fPixelY = 1.0f;
-		double		fSubPixelOffsetX = 0.0f;
-		double		fSubPixelOffsetY = 0.0f;
+		float		fPixelX = 1.0f;
+		float		fPixelY = 1.0f;
+		float		fSubPixelOffsetX = 0.0f;
+		float		fSubPixelOffsetY = 0.0f;
 		bool		bHasInputFocus = false;
 		bool		bHasMouseFocus = false;
-		double		fFrameTimer = 1.0f;
+		float		fFrameTimer = 1.0f;
 		int			nFrameCount = 0;
 		Sprite		*fontSprite = nullptr;
 		std::function<JenovaSpace::Pixel(const int x, const int y, const JenovaSpace::Pixel&, const JenovaSpace::Pixel&)> funcPixelMode;
@@ -674,23 +674,23 @@ namespace JenovaSpace
 			return false;
 	}
 
-	Pixel Sprite::Sample(double x, double y)
+	Pixel Sprite::Sample(float x, float y)
 	{
-		int32_t sx = std::min((int32_t)((x * (double)width)), width - 1);
-		int32_t sy = std::min((int32_t)((y * (double)height)), height - 1);
+		int32_t sx = std::min((int32_t)((x * (float)width)), width - 1);
+		int32_t sy = std::min((int32_t)((y * (float)height)), height - 1);
 		return GetPixel(sx, sy);
 	}
 
-	Pixel Sprite::SampleBL(double u, double v)
+	Pixel Sprite::SampleBL(float u, float v)
 	{
 		u = u * width - 0.5f;
 		v = v * height - 0.5f;
 		int x = (int)floor(u); //cast to int rounds toward zero, not downward
 		int y = (int)floor(v); 
-		double u_ratio = u - x;
-		double v_ratio = v - y;
-		double u_opposite = 1 - u_ratio;
-		double v_opposite = 1 - v_ratio;
+		float u_ratio = u - x;
+		float v_ratio = v - y;
+		float u_opposite = 1 - u_ratio;
+		float v_opposite = 1 - v_ratio;
 
 		JenovaSpace::Pixel p1 = GetPixel(std::max(x, 0), std::max(y, 0));
 		JenovaSpace::Pixel p2 = GetPixel(std::min(x + 1, (int)width - 1), std::max(y, 0));
@@ -859,8 +859,8 @@ namespace JenovaSpace
 		nPixelHeight = pixel_h;
 		bFullScreen = full_screen;
 
-		fPixelX = 2.0f / (double)(nScreenWidth);
-		fPixelY = 2.0f / (double)(nScreenHeight);
+		fPixelX = 2.0f / (float)(nScreenWidth);
+		fPixelY = 2.0f / (float)(nScreenHeight);
 
 		if (nPixelWidth == 0 || nPixelHeight == 0 || nScreenWidth == 0 || nScreenHeight == 0)
 			return JenovaSpace::FAIL;
@@ -1004,11 +1004,11 @@ namespace JenovaSpace
 		if (nPixelMode == Pixel::ALPHA)
 		{
 			Pixel d = pDrawTarget->GetPixel(x, y);
-			double a = (double)(p.a / 255.0f) * fBlendFactor;
-			double c = 1.0f - a;
-			double r = a * (double)p.r + c * (double)d.r;
-			double g = a * (double)p.g + c * (double)d.g;
-			double b = a * (double)p.b + c * (double)d.b;
+			float a = (float)(p.a / 255.0f) * fBlendFactor;
+			float c = 1.0f - a;
+			float r = a * (float)p.r + c * (float)d.r;
+			float g = a * (float)p.g + c * (float)d.g;
+			float b = a * (float)p.b + c * (float)d.b;
 			return pDrawTarget->SetPixel(x, y, Pixel((uint8_t)r, (uint8_t)g, (uint8_t)b));
 		}
 
@@ -1020,7 +1020,7 @@ namespace JenovaSpace
 		return false;
 	}
 
-	void JenovaPixel::SetSubPixelOffset(double ox, double oy)
+	void JenovaPixel::SetSubPixelOffset(float ox, float oy)
 	{
 		fSubPixelOffsetX = ox * fPixelX;
 		fSubPixelOffsetY = oy * fPixelY;
@@ -1441,7 +1441,7 @@ namespace JenovaSpace
 		nPixelMode = Pixel::Mode::CUSTOM;
 	}
 
-	void JenovaPixel::SetPixelBlend(double fBlend)
+	void JenovaPixel::SetPixelBlend(float fBlend)
 	{
 		fBlendFactor = fBlend;
 		if (fBlendFactor < 0.0f) fBlendFactor = 0.0f;
@@ -1455,7 +1455,7 @@ namespace JenovaSpace
 	{
 		return false;
 	}
-	bool JenovaPixel::OnUserUpdate(double fElapsedTime)
+	bool JenovaPixel::OnUserUpdate(float fElapsedTime)
 	{
 		return false;
 	}
@@ -1469,15 +1469,15 @@ namespace JenovaSpace
 	{
 		int32_t ww = nScreenWidth * nPixelWidth;
 		int32_t wh = nScreenHeight * nPixelHeight;
-		double wasp = (double)ww / (double)wh;
+		float wasp = (float)ww / (float)wh;
 
 		nViewW = nWindowWidth;
-		nViewH = (double)nViewW / wasp;
+		nViewH = (float)nViewW / wasp;
 
 		if (nViewH > nWindowHeight)
 		{
 			nViewH = nWindowHeight;
-			nViewW = (double)nViewH * wasp;
+			nViewW = (float)nViewH * wasp;
 		}
 
 		nViewX = (nWindowWidth - nViewW) / 2;
@@ -1509,8 +1509,8 @@ namespace JenovaSpace
 			y -= nViewY;
 		}
 
-		nMousePosXcache = (int32_t)(((double)x / (double)(nWindowWidth - (nViewX * 2)) * (double)nScreenWidth));
-		nMousePosYcache = (int32_t)(((double)y / (double)(nWindowHeight - (nViewY * 2)) * (double)nScreenHeight));
+		nMousePosXcache = (int32_t)(((float)x / (float)(nWindowWidth - (nViewX * 2)) * (float)nScreenWidth));
+		nMousePosYcache = (int32_t)(((float)y / (float)(nWindowHeight - (nViewY * 2)) * (float)nScreenHeight));
 
 		if (nMousePosXcache >= (int32_t)nScreenWidth)
 			nMousePosXcache = nScreenWidth - 1;
@@ -1553,11 +1553,11 @@ namespace JenovaSpace
 			{
 				//Handle Timing
 				tp2 = std::chrono::system_clock::now();
-				std::chrono::duration<double> elapsedTime = tp2 - tp1;
+				std::chrono::duration<float> elapsedTime = tp2 - tp1;
 				tp1 = tp2;
 
 				//Our time per frame coefficient
-				double fElapsedTime = elapsedTime.count();
+				float fElapsedTime = elapsedTime.count();
 
 #ifndef _WIN32
 				//Handle Xlib Message Loop - we do this in the
