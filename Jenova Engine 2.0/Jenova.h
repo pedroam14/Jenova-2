@@ -404,8 +404,8 @@ namespace JenovaSpace
 #endif //OLC_PGE_DEF
 
 
-#ifdef OLC_PGE_APPLICATION
-#undef OLC_PGE_APPLICATION
+#ifdef JENOVAAPP
+#undef JENOVAAPP
 
 namespace JenovaSpace
 {
