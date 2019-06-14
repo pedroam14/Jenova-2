@@ -26,6 +26,9 @@
     <ClInclude Include="Jenova3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\City_Roads1_mip0.png">
@@ -43,5 +46,13 @@
     <Image Include="Resources\TerraSpriteSheet.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\light_cast.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Jenova Engine 2.0.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

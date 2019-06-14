@@ -876,7 +876,7 @@ public:
 			world[x * nWorldWidth + (nWorldWidth - 2)].exist = true;
 		}
 
-		sprLightCast = new JenovaSpace::Sprite("light_cast.png");
+		sprLightCast = new JenovaSpace::Sprite("Resources/light_cast.png");
 
 		// Create some screen-sized off-screen buffers for lighting effect
 		buffLightTex = new JenovaSpace::Sprite(ScreenWidth(), ScreenHeight());

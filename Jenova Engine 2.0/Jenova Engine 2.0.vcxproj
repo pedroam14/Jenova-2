@@ -120,13 +120,18 @@
   <ItemGroup>
     <ClInclude Include="Jenova.h" />
     <ClInclude Include="Jenova3D.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\City_Roads1_mip0.png" />
+    <Image Include="Resources\light_cast.png" />
     <Image Include="Resources\MapSpriteSheet.png" />
     <Image Include="Resources\TerraSpriteSheet.png" />
     <Image Include="Resources\tifa.png" />
     <Image Include="Resources\vivi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Jenova Engine 2.0.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
