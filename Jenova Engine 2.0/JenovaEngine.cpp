@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <fstream>
 
-//Override base class with your custom functionality
+//override base class with your custom functionality
 class MapEditor : public JenovaSpace::JenovaPixel
 {
 
@@ -585,14 +585,14 @@ public:
 
 struct sShape;
 
-// Define a node
+//define a node
 struct sNode
 {
 	sShape *parent;
 	JenovaSpace::vf2d pos;
 };
 
-// Our BASE class, defines the interface for all shapes
+//the baseE class, defines the interface for all shapes
 struct sShape
 {
 	// Shapes are defined by the placment of nodes
@@ -665,13 +665,13 @@ struct sShape
 	}
 };
 
-// We must provide an implementation of our static variables
+//must provide an implementation of static variables
 float sShape::fWorldScale = 1.0f;
 JenovaSpace::vf2d sShape::vWorldOffset = { 0,0 };
 
 
 
-// LINE sub class, inherits from sShape
+//line sub class, inherits from sShape
 struct sLine : public sShape
 {
 	sLine()
@@ -696,7 +696,7 @@ struct sLine : public sShape
 };
 
 
-// BOX
+//box sub class, inherits from sShape
 struct sBox : public sShape
 {
 	sBox()
@@ -715,7 +715,7 @@ struct sBox : public sShape
 };
 
 
-// CIRCLE
+//circle sub class, inherits from sShape
 struct sCircle : public sShape
 {
 	sCircle()
@@ -737,7 +737,7 @@ struct sCircle : public sShape
 	}
 };
 
-// BEZIER SPLINE - requires 3 nodes to be defined fully
+//the curve class is actually a Bezier spline so it requires 3 nodes to be defined fully
 struct sCurve : public sShape
 {
 	sCurve()
@@ -788,8 +788,7 @@ struct sCurve : public sShape
 
 
 
-// APPLICATION STARTS HERE
-
+//CAD-like application starts here
 class Polymorphism : public JenovaSpace::JenovaPixel
 {
 public:
@@ -1038,10 +1037,12 @@ public:
 	}
 };
 
+
+//structures required for the shadow casting algorithm
 struct sEdge
 {
-	float sx, sy; // Start coordinate
-	float ex, ey; // End coordinate
+	float sx, sy; //start coordinate
+	float ex, ey; //end coordinate
 };
 
 struct sCell
@@ -1056,6 +1057,8 @@ struct sCell
 #define EAST 2
 #define WEST 3
 
+
+//2D shadow casting cell
 class ShadowCasting2D : public JenovaSpace::JenovaPixel
 {
 public:
@@ -1460,6 +1463,8 @@ public:
 
 int main()
 {
+	//3 different demos originating from the very same header files
+
 	/*
 	ShadowCasting2D lightingDemo;
 
@@ -1469,7 +1474,7 @@ int main()
 	}
 	//*/
 
-	/*
+	///*
 	MapEditor demo;
 	if (demo.Construct(640, 480, 2, 2))
 	{
@@ -1477,8 +1482,11 @@ int main()
 	}
 	return 0;
 	//*/
+
+	/*
 	Polymorphism poly;
 	if (poly.Construct(1600, 980, 1, 1)) {
 		poly.Start();
 	}
+	//*/
 }
