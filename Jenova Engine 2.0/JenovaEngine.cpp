@@ -11,6 +11,13 @@
 #include <unordered_set>
 #include <fstream>
 
+#define NORTH 0
+#define SOUTH 1
+#define EAST 2
+#define WEST 3
+
+#pragma region "Map Editor"
+
 //override base class with your custom functionality
 class MapEditor : public JenovaSpace::JenovaPixel
 {
@@ -22,7 +29,6 @@ public:
 	}
 
 private:
-
 	//define the cell
 	struct sCell
 	{
@@ -57,9 +63,8 @@ private:
 
 	float fCharAngle = 0.0f;
 	float fCharSpeed = 2.0f;
-	JenovaSpace::GFX3D::Vector3D vecCharVel = { 0,0,0 };
-	JenovaSpace::GFX3D::Vector3D vecCharPos = { 0,0,0 };
-
+	JenovaSpace::GFX3D::Vector3D vecCharVel = {0, 0, 0};
+	JenovaSpace::GFX3D::Vector3D vecCharPos = {0, 0, 0};
 
 	int nMouseWorldX = 0;
 	int nMouseWorldY = 0;
@@ -67,27 +72,26 @@ private:
 	int nOldMouseWorldY = 0;
 
 	bool bMouseDown = false;
-	std::unordered_set<sCell*> setSelectedCells;
+	std::unordered_set<sCell *> setSelectedCells;
 
 	JenovaSpace::GFX3D::PipeLine pipeRender;
 	JenovaSpace::GFX3D::Matrix4x4 matProj;
-	JenovaSpace::GFX3D::Vector3D vUp = { 0,1,0 };
-	JenovaSpace::GFX3D::Vector3D vEye = { 0,0,-10 };
-	JenovaSpace::GFX3D::Vector3D vLookDir = { 0,0,1 };
+	JenovaSpace::GFX3D::Vector3D vUp = {0, 1, 0};
+	JenovaSpace::GFX3D::Vector3D vEye = {0, 0, -10};
+	JenovaSpace::GFX3D::Vector3D vLookDir = {0, 0, 1};
 
 	JenovaSpace::GFX3D::Vector3D viewWorldTopLeft, viewWorldBottomRight;
-
 
 	void SaveCity(std::string sFilename)
 	{
 		std::ofstream file(sFilename, std::ios::out | std::ios::binary);
-		file.write((char*)&nMapWidth, sizeof(int));
-		file.write((char*)&nMapHeight, sizeof(int));
+		file.write((char *)&nMapWidth, sizeof(int));
+		file.write((char *)&nMapHeight, sizeof(int));
 		for (int x = 0; x < nMapWidth; x++)
 		{
 			for (int y = 0; y < nMapHeight; y++)
 			{
-				file.write((char*)&pMap[y*nMapWidth + x], sizeof(sCell));
+				file.write((char *)&pMap[y * nMapWidth + x], sizeof(sCell));
 			}
 		}
 	}
@@ -95,15 +99,15 @@ private:
 	void LoadCity(std::string sFilename)
 	{
 		std::ifstream file(sFilename, std::ios::in | std::ios::binary);
-		file.read((char*)&nMapWidth, sizeof(int));
-		file.read((char*)&nMapHeight, sizeof(int));
+		file.read((char *)&nMapWidth, sizeof(int));
+		file.read((char *)&nMapHeight, sizeof(int));
 		delete[] pMap;
 		pMap = new sCell[nMapWidth * nMapHeight];
 		for (int x = 0; x < nMapWidth; x++)
 		{
 			for (int y = 0; y < nMapHeight; y++)
 			{
-				file.read((char*)&pMap[y*nMapWidth + x], sizeof(sCell));
+				file.read((char *)&pMap[y * nMapWidth + x], sizeof(sCell));
 			}
 		}
 	}
@@ -163,94 +167,574 @@ public:
 		{
 			for (int y = 0; y < nMapHeight; y++)
 			{
-				pMap[y*nMapWidth + x].bRoad = false;
-				pMap[y*nMapWidth + x].nHeight = 0;
-				pMap[y*nMapWidth + x].nWorldX = x;
-				pMap[y*nMapWidth + x].nWorldY = y;
+				pMap[y * nMapWidth + x].bRoad = false;
+				pMap[y * nMapWidth + x].nHeight = 0;
+				pMap[y * nMapWidth + x].nWorldX = x;
+				pMap[y * nMapWidth + x].nWorldY = y;
 			}
 		}
-
 
 		//*VERY* unoptimized, 後で修理してください
 		//here the geometry is unit in size (1x1x1)
 
 		//a Full cube - Always useful for debugging
 		meshCube.tris =
-		{
-			//SOUTH
-			{ 0.0f, 0.0f, 0.0f, 1.0f,	    0.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 1.0f, 0.0f, 1.0f,	0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 0.0f, 0.0f, 0.0f, 1.0f,  		1.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 0.0f, 0.0f, 1.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+			{
+				//SOUTH
+				{
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//EAST
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//EAST
+				{
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//NORTH
-			{ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//NORTH
+				{
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//WEST
-			{ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//WEST
+				{
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//TOP             																 				    
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//TOP
+				{
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//BOTTOM         																 				   
-			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//BOTTOM
+				{
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-		};
+			};
 
 		//A Flat quad
 		meshFlat.tris =
-		{
-			{ 0.0f, 0.0f, 0.0f, 1.0f,	    0.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 1.0f, 0.0f, 1.0f,	0.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
-			{ 0.0f, 0.0f, 0.0f, 1.0f,  		1.0f, 1.0f, 0.0f, 1.0f,		 1.0f, 0.0f, 0.0f, 1.0f,	0.0f, 0.0f, 0.0f,	1.0f, 1.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-		};
+			{
+				{
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+			};
 
 		//The four outer walls of a cell
 		meshWallsOut.tris =
-		{
-			//EAST
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		0.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 0.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f, },
+			{
+				//EAST
+				{
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//WEST
-			{ 0.0f, 0.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 0.0f, 0.0f, 0.2, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
+				//WEST
+				{
+					0.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//TOP             																 				    
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		0.0f, 1.0f, 0.0f,   },
-			{ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.2, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f, 0.0f, 		1.0f, 1.0f, 0.0f,   },
+				//TOP
+				{
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+				},
+				{
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.2,
+					1.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
 
-			//BOTTOM         																 				   
-			{ 1.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f, 0.0f, 		1.0f, 0.0f, 0.0f, },
-			{ 1.0f, 0.0f, 0.2, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f, 0.0f, 		1.0f, 1.0f, 0.0f, },
-		};
+				//BOTTOM
+				{
+					1.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+				},
+				{
+					1.0f,
+					0.0f,
+					0.2,
+					1.0f,
+					0.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					1.0f,
+					0.0f,
+					0.0f,
+					1.0f,
+					1.0f,
+					0.0f,
+				},
+			};
 
-
-		//Initialise the 3D Graphics PGE Extension. This is required
-		//to setup internal buffers to the same size as the main output
+		//initialise the 3D Graphics Jenova Extension as this is required to setup internal buffers to the same size as the main output
 		JenovaSpace::GFX3D::ConfigureDisplay();
 
-		//Configure the rendering pipeline with projection and viewport properties
+		//configure the rendering pipeline with projection and viewport properties
 		pipeRender.SetProjection(90.0f, (float)ScreenHeight() / (float)ScreenWidth(), 0.1, 1000.0f, 0.0f, 0.0f, ScreenWidth(), ScreenHeight());
 
-		//Also make a projection matrix, we might need this later
+		//also make a projection matrix, we might need this later
 		matProj = JenovaSpace::GFX3D::Math::Mat_MakeProjection(90.0f, (float)ScreenHeight() / (float)ScreenWidth(), 0.1, 1000.0f);
 
 		//setting affine texture mapping to false, in order to correct for perspective
 		pipeRender.SetTextureMappingMode(false);
 
-		//Ok, lets go!
 		return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		//Directly manipulate camera
+		//directly manipulate camera
 		if (GetKey(JenovaSpace::Key::W).bHeld)
 		{
 			vecCharPos.y += 2.0f * fElapsedTime;
@@ -269,15 +753,17 @@ public:
 		}
 		//manipulate it by only going forward and spinning, as you would a car
 
-		if (GetKey(JenovaSpace::Key::Z).bHeld) fCameraZ += 5.0f * fElapsedTime;
-		if (GetKey(JenovaSpace::Key::X).bHeld) fCameraZ -= 5.0f * fElapsedTime;
+		if (GetKey(JenovaSpace::Key::Z).bHeld)
+			fCameraZ += 5.0f * fElapsedTime;
+		if (GetKey(JenovaSpace::Key::X).bHeld)
+			fCameraZ -= 5.0f * fElapsedTime;
 
-		if (GetKey(JenovaSpace::Key::F5).bReleased) SaveCity("example1.city");
-		if (GetKey(JenovaSpace::Key::F8).bReleased) LoadCity("example1.city");
+		if (GetKey(JenovaSpace::Key::F5).bReleased)
+			SaveCity("example1.city");
+		if (GetKey(JenovaSpace::Key::F8).bReleased)
+			LoadCity("example1.city");
 
-
-		//if there are no selected cells, then only edit the cell under the current mouse cursor
-		//otherwise iterate through the set of sleected cells and apply to all of them
+		//if there are no selected cells, then only edit the cell under the current mouse cursor, otherwise iterate through the set of sleected cells and apply to all of them
 
 		//check that cell exists in valid 2D map space
 		if (nMouseWorldX >= 0 && nMouseWorldX < nMapWidth && nMouseWorldY >= 0 && nMouseWorldY < nMapHeight)
@@ -293,7 +779,7 @@ public:
 					}
 				}
 				else
-					pMap[nMouseWorldY*nMapWidth + nMouseWorldX].bRoad = !pMap[nMouseWorldY*nMapWidth + nMouseWorldX].bRoad;
+					pMap[nMouseWorldY * nMapWidth + nMouseWorldX].bRoad = !pMap[nMouseWorldY * nMapWidth + nMouseWorldX].bRoad;
 			}
 
 			//press "T" to increase height for selected cell(s)
@@ -307,7 +793,7 @@ public:
 					}
 				}
 				else
-					pMap[nMouseWorldY*nMapWidth + nMouseWorldX].nHeight++;
+					pMap[nMouseWorldY * nMapWidth + nMouseWorldX].nHeight++;
 			}
 
 			//press "E" to decrease height for selected cell(s)
@@ -321,16 +807,16 @@ public:
 					}
 				}
 				else
-					pMap[nMouseWorldY*nMapWidth + nMouseWorldX].nHeight--;
+					pMap[nMouseWorldY * nMapWidth + nMouseWorldX].nHeight--;
 			}
 		}
 
+		if (GetKey(JenovaSpace::Key::LEFT).bHeld)
+			fCharAngle -= 4.0f * fElapsedTime;
+		if (GetKey(JenovaSpace::Key::RIGHT).bHeld)
+			fCharAngle += 4.0f * fElapsedTime;
 
-
-		if (GetKey(JenovaSpace::Key::LEFT).bHeld) fCharAngle -= 4.0f * fElapsedTime;
-		if (GetKey(JenovaSpace::Key::RIGHT).bHeld) fCharAngle += 4.0f * fElapsedTime;
-
-		JenovaSpace::GFX3D::Vector3D a = { 1, 0, 0 };
+		JenovaSpace::GFX3D::Vector3D a = {1, 0, 0};
 		JenovaSpace::GFX3D::Matrix4x4 m = JenovaSpace::GFX3D::Math::Mat_MakeRotationZ(fCharAngle);
 		vecCharVel = JenovaSpace::GFX3D::Math::Mat_MultiplyVector(m, a);
 
@@ -340,33 +826,28 @@ public:
 			vecCharPos.y += vecCharVel.y * fCharSpeed * fElapsedTime;
 		}
 
-
-		//the camera currently follows the char, and the char stays in the middle of the screen 
-		//we have to know where the camera is before we can work with on screen interactions
+		//the camera currently follows the char, and the char stays in the middle of the screen we have to know where the camera is before we can work with on screen interactions
 		fCameraY = vecCharPos.y;
 		fCameraX = vecCharPos.x;
-		vEye = { fCameraX,fCameraY,fCameraZ };
+		vEye = {fCameraX, fCameraY, fCameraZ};
 		JenovaSpace::GFX3D::Vector3D vLookTarget = JenovaSpace::GFX3D::Math::Vec_Add(vEye, vLookDir);
 
 		//setup the camera properties for the pipeline - aka "view" transform
 		pipeRender.SetCamera(vEye, vLookTarget, vUp);
 
-
-
 		JenovaSpace::GFX3D::Matrix4x4 matView = JenovaSpace::GFX3D::Math::Mat_PointAt(vEye, vLookTarget, vUp);
 
 		//presume the origin of the mouse ray is the middle of the screen...
-		JenovaSpace::GFX3D::Vector3D vecMouseOrigin = { 0.0f, 0.0f, 0.0f };
+		JenovaSpace::GFX3D::Vector3D vecMouseOrigin = {0.0f, 0.0f, 0.0f};
 
-		//...and that a ray is cast to the mouse location from the origin. Here we translate
-		//the mouse coordinates into viewport coordinates
+		//...and that a ray is cast to the mouse location from the origin and translate the mouse coordinates into viewport coordinates
 		JenovaSpace::GFX3D::Vector3D vecMouseDir = {
 			2.0f * ((GetMouseX() / (float)ScreenWidth()) - 0.5f) / matProj.m[0][0],
 			2.0f * ((GetMouseY() / (float)ScreenHeight()) - 0.5f) / matProj.m[1][1],
 			1.0f,
-			0.0f };
+			0.0f};
 
-		//now transform the origin point and ray direction by the inverse of the camera		
+		//now transform the origin point and ray direction by the inverse of the camera
 		vecMouseOrigin = JenovaSpace::GFX3D::Math::Mat_MultiplyVector(matView, vecMouseOrigin);
 		vecMouseDir = JenovaSpace::GFX3D::Math::Mat_MultiplyVector(matView, vecMouseDir);
 
@@ -377,17 +858,16 @@ public:
 		vecMouseDir = JenovaSpace::GFX3D::Math::Vec_Add(vecMouseOrigin, vecMouseDir);
 
 		//all of our intersections for mouse checks occur in the ground plane (z=0), so define a plane at that location
-		JenovaSpace::GFX3D::Vector3D plane_p = { 0.0f, 0.0f, 0.0f };
-		JenovaSpace::GFX3D::Vector3D plane_n = { 0.0f, 0.0f, 1.0f };
+		JenovaSpace::GFX3D::Vector3D plane_p = {0.0f, 0.0f, 0.0f};
+		JenovaSpace::GFX3D::Vector3D plane_n = {0.0f, 0.0f, 1.0f};
 
 		//calculate Mouse Location in plane, by doing a line/plane intersection test
 		float t = 0.0f;
 		JenovaSpace::GFX3D::Vector3D mouse3d = JenovaSpace::GFX3D::Math::Vec_IntersectPlane(plane_p, plane_n, vecMouseOrigin, vecMouseDir, t);
 
-
-
 		//left click & left click drag selects cells by adding them to the set of selected cells
-		if (GetMouse(0).bHeld && ((nMouseWorldX != nOldMouseWorldX) || (nMouseWorldY != nOldMouseWorldY))){
+		if (GetMouse(0).bHeld && ((nMouseWorldX != nOldMouseWorldX) || (nMouseWorldY != nOldMouseWorldY)))
+		{
 			setSelectedCells.emplace(&pMap[nMouseWorldY * nMapWidth + nMouseWorldX]);
 		}
 		//single clicking cells also adds them
@@ -396,7 +876,8 @@ public:
 			setSelectedCells.emplace(&pMap[nMouseWorldY * nMapWidth + nMouseWorldX]);
 		}
 		//if the user right clicks, the set of selected cells is emptied
-		if (GetMouse(1).bReleased){
+		if (GetMouse(1).bReleased)
+		{
 			setSelectedCells.clear();
 		}
 		//cache the current mouse position to use during comparison in next frame
@@ -406,23 +887,21 @@ public:
 		nMouseWorldX = (int)mouse3d.x;
 		nMouseWorldY = (int)mouse3d.y;
 
-
 		//rendering area
 
 		//first Clear the screen and the depth buffer
 		Clear(JenovaSpace::BLUE);
 		JenovaSpace::GFX3D::ClearDepth();
 
-
 		//work out Top Left Ground Cell
-		vecMouseDir = { -1.0f / matProj.m[0][0],-1.0f / matProj.m[1][1], 1.0f, 0.0f };
+		vecMouseDir = {-1.0f / matProj.m[0][0], -1.0f / matProj.m[1][1], 1.0f, 0.0f};
 		vecMouseDir = JenovaSpace::GFX3D::Math::Mat_MultiplyVector(matView, vecMouseDir);
 		vecMouseDir = JenovaSpace::GFX3D::Math::Vec_Mul(vecMouseDir, 1000.0f);
 		vecMouseDir = JenovaSpace::GFX3D::Math::Vec_Add(vecMouseOrigin, vecMouseDir);
 		viewWorldTopLeft = JenovaSpace::GFX3D::Math::Vec_IntersectPlane(plane_p, plane_n, vecMouseOrigin, vecMouseDir, t);
 
 		//work out Bottom Right Ground Cell
-		vecMouseDir = { 1.0f / matProj.m[0][0], 1.0f / matProj.m[1][1], 1.0f, 0.0f };
+		vecMouseDir = {1.0f / matProj.m[0][0], 1.0f / matProj.m[1][1], 1.0f, 0.0f};
 		vecMouseDir = JenovaSpace::GFX3D::Math::Mat_MultiplyVector(matView, vecMouseDir);
 		vecMouseDir = JenovaSpace::GFX3D::Math::Vec_Mul(vecMouseDir, 1000.0f);
 		vecMouseDir = JenovaSpace::GFX3D::Math::Vec_Add(vecMouseOrigin, vecMouseDir);
@@ -439,36 +918,45 @@ public:
 		int nStartY = std::max(0, (int)viewWorldTopLeft.y - 1);
 		int nEndY = std::min(nMapHeight, (int)viewWorldBottomRight.y + 1);
 
-
 		//iterate through all the cells we wish to draw and each cell is 1x1 and elevates in the Z -Axis
 		for (int x = nStartX; x < nEndX; x++)
 		{
 			for (int y = nStartY; y < nEndY; y++)
 			{
-				if (pMap[y*nMapWidth + x].bRoad)
+				if (pMap[y * nMapWidth + x].bRoad)
 				{
 					//cell is a road, look at neighbouring cells, if they are roads also, then choose the appropriate texture that joins up correctly
 					//recycle this for the lighting demo
 					int road = 0;
-					auto r = [&](int i, int j)
-					{
+					auto r = [&](int i, int j) {
 						return pMap[(y + j) * nMapWidth + (x + i)].bRoad;
 					};
 
-					if (r(0, -1) && r(0, +1) && !r(-1, 0) && !r(+1, 0)) road = 0;
-					if (!r(0, -1) && !r(0, +1) && r(-1, 0) && r(+1, 0)) road = 1;
+					if (r(0, -1) && r(0, +1) && !r(-1, 0) && !r(+1, 0))
+						road = 0;
+					if (!r(0, -1) && !r(0, +1) && r(-1, 0) && r(+1, 0))
+						road = 1;
 
-					if (!r(0, -1) && r(0, +1) && !r(-1, 0) && r(+1, 0)) road = 3;
-					if (!r(0, -1) && r(0, +1) && r(-1, 0) && r(+1, 0)) road = 4;
-					if (!r(0, -1) && r(0, +1) && r(-1, 0) && !r(+1, 0)) road = 5;
+					if (!r(0, -1) && r(0, +1) && !r(-1, 0) && r(+1, 0))
+						road = 3;
+					if (!r(0, -1) && r(0, +1) && r(-1, 0) && r(+1, 0))
+						road = 4;
+					if (!r(0, -1) && r(0, +1) && r(-1, 0) && !r(+1, 0))
+						road = 5;
 
-					if (r(0, -1) && r(0, +1) && !r(-1, 0) && r(+1, 0)) road = 6;
-					if (r(0, -1) && r(0, +1) && r(-1, 0) && r(+1, 0)) road = 7;
-					if (r(0, -1) && r(0, +1) && r(-1, 0) && !r(+1, 0)) road = 8;
+					if (r(0, -1) && r(0, +1) && !r(-1, 0) && r(+1, 0))
+						road = 6;
+					if (r(0, -1) && r(0, +1) && r(-1, 0) && r(+1, 0))
+						road = 7;
+					if (r(0, -1) && r(0, +1) && r(-1, 0) && !r(+1, 0))
+						road = 8;
 
-					if (r(0, -1) && !r(0, +1) && !r(-1, 0) && r(+1, 0)) road = 9;
-					if (r(0, -1) && !r(0, +1) && r(-1, 0) && r(+1, 0)) road = 10;
-					if (r(0, -1) && !r(0, +1) && r(-1, 0) && !r(+1, 0)) road = 11;
+					if (r(0, -1) && !r(0, +1) && !r(-1, 0) && r(+1, 0))
+						road = 9;
+					if (r(0, -1) && !r(0, +1) && r(-1, 0) && r(+1, 0))
+						road = 10;
+					if (r(0, -1) && !r(0, +1) && r(-1, 0) && !r(+1, 0))
+						road = 11;
 
 					//create a translation transform to position the cell in the world
 					JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, 0.0f);
@@ -479,18 +967,17 @@ public:
 
 					//draw a flat quad
 					pipeRender.Render(meshFlat.tris);
-
 				}
 				else //not Road
 				{
 					//if the cell is not considered road, then draw it appropriately
 
-					if (pMap[y*nMapWidth + x].nHeight < 0)
+					if (pMap[y * nMapWidth + x].nHeight < 0)
 					{
 						//水はまだいないね
 					}
 
-					if (pMap[y*nMapWidth + x].nHeight == 0)
+					if (pMap[y * nMapWidth + x].nHeight == 0)
 					{
 						//cell is ground, draw a flat grass quad at height 0
 						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, 0.0f);
@@ -499,11 +986,11 @@ public:
 						pipeRender.Render(meshFlat.tris);
 					}
 
-					if (pMap[y*nMapWidth + x].nHeight > 0)
+					if (pMap[y * nMapWidth + x].nHeight > 0)
 					{
-						//Cell is a cube, for now, it'll draw each level as a seperate mesh 
+						//Cell is a cube, for now, it'll draw each level as a seperate mesh
 						int h, t;
-						t = pMap[y*nMapWidth + x].nHeight;
+						t = pMap[y * nMapWidth + x].nHeight;
 
 						for (h = 0; h < t; h++)
 						{
@@ -517,7 +1004,7 @@ public:
 						}
 
 						//top of the 3d cube
-						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, -(h) * 0.2f);
+						JenovaSpace::GFX3D::Matrix4x4 matWorld = JenovaSpace::GFX3D::Math::Mat_MakeTranslation(x, y, -(h)*0.2f);
 						pipeRender.SetTransform(matWorld);
 						pipeRender.SetTexture(sprRoof);
 						pipeRender.Render(meshFlat.tris);
@@ -563,7 +1050,6 @@ public:
 		//set transparency back to none to optimise drawing other pixels
 		SetPixelMode(JenovaSpace::Pixel::NORMAL);
 
-
 		//draw the current camera position for debug information
 		DrawString(10, 30, "CX: " + std::to_string(fCameraX) + " CY: " + std::to_string(fCameraY) + " CZ: " + std::to_string(fCameraZ));
 		return true;
@@ -604,7 +1090,7 @@ struct sShape
 	virtual void DrawYourself(JenovaSpace::JenovaPixel *pge) = 0;
 
 	//Shapes are defined by nodes　and once the maximum number of nodes for a shape have been placed, it returns nullptr
-	sNode* GetNextNode(const JenovaSpace::vf2d &p)
+	sNode *GetNextNode(const JenovaSpace::vf2d &p)
 	{
 		if (vecNodes.size() == nMaxNodes)
 			return nullptr; //Shape is complete so no new nodes to be issued
@@ -619,7 +1105,7 @@ struct sShape
 	}
 
 	//test to see if supplied coordinate exists at same location as any of the nodes for this shape and returns a pointer to that node if it does
-	sNode* HitNode(JenovaSpace::vf2d &p)
+	sNode *HitNode(JenovaSpace::vf2d &p)
 	{
 		for (auto &n : vecNodes)
 		{
@@ -644,9 +1130,7 @@ struct sShape
 
 //must provide an implementation of static variables
 float sShape::fWorldScale = 1.0f;
-JenovaSpace::vf2d sShape::vWorldOffset = { 0,0 };
-
-
+JenovaSpace::vf2d sShape::vWorldOffset = {0, 0};
 
 //line sub class, inherits from sShape
 struct sLine : public sShape
@@ -654,7 +1138,7 @@ struct sLine : public sShape
 	sLine()
 	{
 		nMaxNodes = 2;
-		vecNodes.reserve(nMaxNodes); 
+		vecNodes.reserve(nMaxNodes);
 	}
 
 	//implements custom DrawYourself Function, meaning the shape is no longer abstract
@@ -667,14 +1151,13 @@ struct sLine : public sShape
 	}
 };
 
-
 //box sub class, inherits from sShape
 struct sBox : public sShape
 {
 	sBox()
 	{
 		nMaxNodes = 2;
-		vecNodes.reserve(nMaxNodes); 
+		vecNodes.reserve(nMaxNodes);
 	}
 
 	void DrawYourself(JenovaSpace::JenovaPixel *pge) override
@@ -685,7 +1168,6 @@ struct sBox : public sShape
 		pge->DrawRect(sx, sy, ex - sx, ey - sy, col);
 	}
 };
-
 
 //circle sub class, inherits from sShape
 struct sCircle : public sShape
@@ -747,22 +1229,23 @@ struct sCurve : public sShape
 			JenovaSpace::vf2d np = op;
 			for (float t = 0; t < 1.0f; t += 0.01f)
 			{
-				np = (1 - t)*(1 - t)*vecNodes[0].pos + 2 * (1 - t)*t*vecNodes[1].pos + t * t * vecNodes[2].pos;
+				np = (1 - t) * (1 - t) * vecNodes[0].pos + 2 * (1 - t) * t * vecNodes[1].pos + t * t * vecNodes[2].pos;
 				WorldToScreen(op, sx, sy);
 				WorldToScreen(np, ex, ey);
 				pge->DrawLine(sx, sy, ex, ey, col);
 				op = np;
 			}
 		}
-
 	}
 };
 
+#pragma endregion
 
-
+#pragma region "CAD"
 //CAD-like application starts here
 class Polymorphism : public JenovaSpace::JenovaPixel
 {
+
 public:
 	Polymorphism()
 	{
@@ -771,8 +1254,8 @@ public:
 
 private:
 	//Pan & Zoom variables
-	JenovaSpace::vf2d vOffset = { 0.0f, 0.0f };
-	JenovaSpace::vf2d vStartPan = { 0.0f, 0.0f };
+	JenovaSpace::vf2d vOffset = {0.0f, 0.0f};
+	JenovaSpace::vf2d vStartPan = {0.0f, 0.0f};
 	float fScale = 10.0f;
 	float fGrid = 1.0f;
 
@@ -790,35 +1273,32 @@ private:
 		v.y = (float)(nScreenY) / fScale + vOffset.y;
 	}
 
-
 	//pointer to a shape that is currently being defined by the placment of nodes
-	sShape* tempShape = nullptr;
+	sShape *tempShape = nullptr;
 
 	//list of pointers to all shapes which have been drawn so far
-	std::list<sShape*> listShapes;
+	std::list<sShape *> listShapes;
 
 	//pointer to a node that is currently selected and selected nodes follow the mouse cursor
 	sNode *selectedNode = nullptr;
 
-	//"Snapped" mouse location
-	JenovaSpace::vf2d vCursor = { 0, 0 };
-
+	//"snapped" mouse location
+	JenovaSpace::vf2d vCursor = {0, 0};
 
 public:
 	bool OnUserCreate() override
 	{
-		//Configure world space (0,0) to be middle of screen space
-		vOffset = { (float)(-ScreenWidth() / 2) / fScale, (float)(-ScreenHeight() / 2) / fScale };
+		//configure world space (0,0) to be middle of screen space
+		vOffset = {(float)(-ScreenWidth() / 2) / fScale, (float)(-ScreenHeight() / 2) / fScale};
 		return true;
 	}
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		//Get mouse location this frame
-		JenovaSpace::vf2d vMouse = { (float)GetMouseX(), (float)GetMouseY() };
+		//get mouse location this frame
+		JenovaSpace::vf2d vMouse = {(float)GetMouseX(), (float)GetMouseY()};
 
-
-		//Handle Pan & Zoom
+		//handle Pan & Zoom
 		if (GetMouse(2).bPressed)
 		{
 			vStartPan = vMouse;
@@ -847,61 +1327,57 @@ public:
 		ScreenToWorld((int)vMouse.x, (int)vMouse.y, vMouseAfterZoom);
 		vOffset += (vMouseBeforeZoom - vMouseAfterZoom);
 
-
-		//Snap mouse cursor to nearest grid interval
+		//snap mouse cursor to nearest grid interval
 		vCursor.x = floorf((vMouseAfterZoom.x + 0.5f) * fGrid);
 		vCursor.y = floorf((vMouseAfterZoom.y + 0.5f) * fGrid);
-
 
 		if (GetKey(JenovaSpace::Key::L).bPressed)
 		{
 			tempShape = new sLine();
 
-			//Place first node at location of keypress
+			//place first node at location of keypress
 			selectedNode = tempShape->GetNextNode(vCursor);
 
-			//Get Second node
+			//get Second node
 			selectedNode = tempShape->GetNextNode(vCursor);
 		}
-
 
 		if (GetKey(JenovaSpace::Key::B).bPressed)
 		{
 			tempShape = new sBox();
 
-			//Place first node at location of keypress
+			//place first node at location of keypress
 			selectedNode = tempShape->GetNextNode(vCursor);
 
-			//Get Second node
+			//get Second node
 			selectedNode = tempShape->GetNextNode(vCursor);
 		}
 
 		if (GetKey(JenovaSpace::Key::C).bPressed)
 		{
-			//Create new shape as a temporary
+			//create new shape as a temporary
 			tempShape = new sCircle();
 
-			//Place first node at location of keypress
+			//place first node at location of keypress
 			selectedNode = tempShape->GetNextNode(vCursor);
 
-			//Get Second node
+			//get Second node
 			selectedNode = tempShape->GetNextNode(vCursor);
 		}
 
 		if (GetKey(JenovaSpace::Key::S).bPressed)
 		{
-			//Create new shape as a temporary
+			//create new shape as a temporary
 			tempShape = new sCurve();
 
-			//Place first node at location of keypress
+			//place first node at location of keypress
 			selectedNode = tempShape->GetNextNode(vCursor);
 
-			//Get Second node
+			//get Second node
 			selectedNode = tempShape->GetNextNode(vCursor);
 		}
 
-		//Search for any node that exists under the cursor, if one
-		//is found then select it
+		//search for any node that exists under the cursor, if one is found then select it
 		if (GetKey(JenovaSpace::Key::M).bPressed)
 		{
 			selectedNode = nullptr;
@@ -913,18 +1389,13 @@ public:
 			}
 		}
 
-
-		//If a node is selected, make it follow the mouse cursor
-		//by updating its position
+		//if a node is selected, make it follow the mouse cursor by updating its position
 		if (selectedNode != nullptr)
 		{
 			selectedNode->pos = vCursor;
 		}
 
-
-		//As the user left clicks to place nodes, the shape can grow
-		//until it requires no more nodes, at which point it is completed
-		//and added to the list of completed shapes.
+		//as the user left clicks to place nodes, the shape can grow until it requires no more nodes, at which point it is completed and added to the list of completed shapes
 		if (GetMouse(0).bReleased)
 		{
 			if (tempShape != nullptr)
@@ -938,72 +1409,72 @@ public:
 			}
 		}
 
-
-
-		//Clear Screen
+		//clear Screen
 		Clear(JenovaSpace::VERY_DARK_BLUE);
 
 		int sx, sy;
 		int ex, ey;
 
-		//Get visible world
+		//get visible world
 		JenovaSpace::vf2d vWorldTopLeft, vWorldBottomRight;
 		ScreenToWorld(0, 0, vWorldTopLeft);
 		ScreenToWorld(ScreenWidth(), ScreenHeight(), vWorldBottomRight);
 
-		//Get values just beyond screen boundaries
+		//get values just beyond screen boundaries
 		vWorldTopLeft.x = floor(vWorldTopLeft.x);
 		vWorldTopLeft.y = floor(vWorldTopLeft.y);
 		vWorldBottomRight.x = ceil(vWorldBottomRight.x);
 		vWorldBottomRight.y = ceil(vWorldBottomRight.y);
 
-		//Draw Grid dots
+		//draw Grid dots
 		for (float x = vWorldTopLeft.x; x < vWorldBottomRight.x; x += fGrid)
 		{
 			for (float y = vWorldTopLeft.y; y < vWorldBottomRight.y; y += fGrid)
 			{
-				WorldToScreen({ x, y }, sx, sy);
+				WorldToScreen({x, y}, sx, sy);
 				Draw(sx, sy, JenovaSpace::BLUE);
 			}
 		}
 
-		//Draw World Axis
-		WorldToScreen({ 0,vWorldTopLeft.y }, sx, sy);
-		WorldToScreen({ 0,vWorldBottomRight.y }, ex, ey);
+		//draw World Axis
+		WorldToScreen({0, vWorldTopLeft.y}, sx, sy);
+		WorldToScreen({0, vWorldBottomRight.y}, ex, ey);
 		DrawLine(sx, sy, ex, ey, JenovaSpace::GREY, 0xF0F0F0F0);
-		WorldToScreen({ vWorldTopLeft.x,0 }, sx, sy);
-		WorldToScreen({ vWorldBottomRight.x,0 }, ex, ey);
+		WorldToScreen({vWorldTopLeft.x, 0}, sx, sy);
+		WorldToScreen({vWorldBottomRight.x, 0}, ex, ey);
 		DrawLine(sx, sy, ex, ey, JenovaSpace::GREY, 0xF0F0F0F0);
 
-		//Update shape translation coefficients
+		//update shape translation coefficients
 		sShape::fWorldScale = fScale;
 		sShape::vWorldOffset = vOffset;
 
-		//Draw All Existing Shapes
+		//draw All Existing Shapes
 		for (auto &shape : listShapes)
 		{
 			shape->DrawYourself(this);
 			shape->DrawNodes(this);
 		}
 
-		//Draw shape currently being defined
+		//draw shape currently being defined
 		if (tempShape != nullptr)
 		{
 			tempShape->DrawYourself(this);
 			tempShape->DrawNodes(this);
 		}
 
-		//Draw "Snapped" Cursor
+		//draw "Snapped" Cursor
 		WorldToScreen(vCursor, sx, sy);
 		DrawCircle(sx, sy, 3, JenovaSpace::YELLOW);
 
-		//Draw Cursor Position
+		//draw Cursor Position
 		DrawString(10, 10, "X=" + std::to_string(vCursor.x) + ", Y=" + std::to_string(vCursor.y), JenovaSpace::YELLOW, 2);
 		return true;
 	}
 };
 
+#pragma endregion
 
+#pragma region "Lighting Demo"
 //structures required for the shadow casting algorithm
 struct sEdge
 {
@@ -1017,13 +1488,6 @@ struct sCell
 	bool edge_exist[4];
 	bool exist = false;
 };
-
-#define NORTH 0
-#define SOUTH 1
-#define EAST 2
-#define WEST 3
-
-
 //2D shadow casting cell
 class ShadowCasting2D : public JenovaSpace::JenovaPixel
 {
@@ -1034,7 +1498,7 @@ public:
 	}
 
 private:
-	sCell* world;
+	sCell *world;
 	int nWorldWidth = 40;
 	int nWorldHeight = 30;
 
@@ -1049,7 +1513,7 @@ private:
 
 	void ConvertTileMapToPolyMap(int sx, int sy, int w, int h, float fBlockWidth, int pitch)
 	{
-		//Clear "PolyMap"
+		//clear "PolyMap"
 		vecEdges.clear();
 
 		for (int x = 0; x < w; x++)
@@ -1060,151 +1524,155 @@ private:
 					world[(y + sy) * pitch + (x + sx)].edge_id[j] = 0;
 				}
 
-		//Iterate through region from top left to bottom right
+		//iterate through region from top left to bottom right
 		for (int x = 1; x < w - 1; x++)
 			for (int y = 1; y < h - 1; y++)
 			{
-				//Create some convenient indices
-				int i = (y + sy) * pitch + (x + sx);			//This
-				int n = (y + sy - 1) * pitch + (x + sx);		//Northern Neighbour
-				int s = (y + sy + 1) * pitch + (x + sx);		//Southern Neighbour
-				int w = (y + sy) * pitch + (x + sx - 1);	//Western Neighbour
-				int e = (y + sy) * pitch + (x + sx + 1);	//Eastern Neighbour
+				//create some convenient indices
+				int i = (y + sy) * pitch + (x + sx);	 //this
+				int n = (y + sy - 1) * pitch + (x + sx); //Northern Neighbour
+				int s = (y + sy + 1) * pitch + (x + sx); //Southern Neighbour
+				int w = (y + sy) * pitch + (x + sx - 1); //Western Neighbour
+				int e = (y + sy) * pitch + (x + sx + 1); //Eastern Neighbour
 
-				//If this cell exists, check if it needs edges
+				//if this cell exists, check if it needs edges
 				if (world[i].exist)
 				{
-					//If this cell has no western neighbour, it needs a western edge
+					//if this cell has no western neighbour, it needs a western edge
 					if (!world[w].exist)
 					{
-						//It can either extend it from its northern neighbour if they have
+						//it can either extend it from its northern neighbour if they have
 						//one, or It can start a new one.
 						if (world[n].edge_exist[WEST])
 						{
-							//Northern neighbour has a western edge, so grow it downwards
+							//northern neighbour has a western edge, so grow it downwards
 							vecEdges[world[n].edge_id[WEST]].ey += fBlockWidth;
 							world[i].edge_id[WEST] = world[n].edge_id[WEST];
 							world[i].edge_exist[WEST] = true;
 						}
 						else
 						{
-							//Northern neighbour does not have one, so create one
+							//northern neighbour does not have one, so create one
 							sEdge edge;
-							edge.sx = (sx + x) * fBlockWidth; edge.sy = (sy + y) * fBlockWidth;
-							edge.ex = edge.sx; edge.ey = edge.sy + fBlockWidth;
+							edge.sx = (sx + x) * fBlockWidth;
+							edge.sy = (sy + y) * fBlockWidth;
+							edge.ex = edge.sx;
+							edge.ey = edge.sy + fBlockWidth;
 
-							//Add edge to Polygon Pool
+							//add edge to Polygon Pool
 							int edge_id = vecEdges.size();
 							vecEdges.push_back(edge);
 
-							//Update tile information with edge information
+							//update tile information with edge information
 							world[i].edge_id[WEST] = edge_id;
 							world[i].edge_exist[WEST] = true;
 						}
 					}
 
-					//If this cell dont have an eastern neignbour, It needs a eastern edge
+					//if this cell dont have an eastern neignbour, It needs a eastern edge
 					if (!world[e].exist)
 					{
-						//It can either extend it from its northern neighbour if they have
+						//it can either extend it from its northern neighbour if they have
 						//one, or It can start a new one.
 						if (world[n].edge_exist[EAST])
 						{
-							//Northern neighbour has one, so grow it downwards
+							//northern neighbour has one, so grow it downwards
 							vecEdges[world[n].edge_id[EAST]].ey += fBlockWidth;
 							world[i].edge_id[EAST] = world[n].edge_id[EAST];
 							world[i].edge_exist[EAST] = true;
 						}
 						else
 						{
-							//Northern neighbour does not have one, so create one
+							//northern neighbour does not have one, so create one
 							sEdge edge;
-							edge.sx = (sx + x + 1) * fBlockWidth; edge.sy = (sy + y) * fBlockWidth;
-							edge.ex = edge.sx; edge.ey = edge.sy + fBlockWidth;
+							edge.sx = (sx + x + 1) * fBlockWidth;
+							edge.sy = (sy + y) * fBlockWidth;
+							edge.ex = edge.sx;
+							edge.ey = edge.sy + fBlockWidth;
 
-							//Add edge to Polygon Pool
+							//add edge to Polygon Pool
 							int edge_id = vecEdges.size();
 							vecEdges.push_back(edge);
 
-							//Update tile information with edge information
+							//update tile information with edge information
 							world[i].edge_id[EAST] = edge_id;
 							world[i].edge_exist[EAST] = true;
 						}
 					}
 
-					//If this cell doesnt have a northern neignbour, It needs a northern edge
+					//if this cell doesnt have a northern neignbour, It needs a northern edge
 					if (!world[n].exist)
 					{
-						//It can either extend it from its western neighbour if they have
+						//it can either extend it from its western neighbour if they have
 						//one, or It can start a new one.
 						if (world[w].edge_exist[NORTH])
 						{
-							//Western neighbour has one, so grow it eastwards
+							//western neighbour has one, so grow it eastwards
 							vecEdges[world[w].edge_id[NORTH]].ex += fBlockWidth;
 							world[i].edge_id[NORTH] = world[w].edge_id[NORTH];
 							world[i].edge_exist[NORTH] = true;
 						}
 						else
 						{
-							//Western neighbour does not have one, so create one
+							//western neighbour does not have one, so create one
 							sEdge edge;
-							edge.sx = (sx + x) * fBlockWidth; edge.sy = (sy + y) * fBlockWidth;
-							edge.ex = edge.sx + fBlockWidth; edge.ey = edge.sy;
+							edge.sx = (sx + x) * fBlockWidth;
+							edge.sy = (sy + y) * fBlockWidth;
+							edge.ex = edge.sx + fBlockWidth;
+							edge.ey = edge.sy;
 
-							//Add edge to Polygon Pool
+							//add edge to Polygon Pool
 							int edge_id = vecEdges.size();
 							vecEdges.push_back(edge);
 
-							//Update tile information with edge information
+							//update tile information with edge information
 							world[i].edge_id[NORTH] = edge_id;
 							world[i].edge_exist[NORTH] = true;
 						}
 					}
 
-					//If this cell doesnt have a southern neignbour, It needs a southern edge
+					//if this cell doesnt have a southern neignbour, It needs a southern edge
 					if (!world[s].exist)
 					{
-						//It can either extend it from its western neighbour if they have
-						//one, or It can start a new one.
+						//it can either extend it from its western neighbour if they have one, or It can start a new one.
 						if (world[w].edge_exist[SOUTH])
 						{
-							//Western neighbour has one, so grow it eastwards
+							//western neighbour has one, so grow it eastwards
 							vecEdges[world[w].edge_id[SOUTH]].ex += fBlockWidth;
 							world[i].edge_id[SOUTH] = world[w].edge_id[SOUTH];
 							world[i].edge_exist[SOUTH] = true;
 						}
 						else
 						{
-							//Western neighbour does not have one, so I need to create one
+							//western neighbour does not have one, so I need to create one
 							sEdge edge;
-							edge.sx = (sx + x) * fBlockWidth; edge.sy = (sy + y + 1) * fBlockWidth;
-							edge.ex = edge.sx + fBlockWidth; edge.ey = edge.sy;
+							edge.sx = (sx + x) * fBlockWidth;
+							edge.sy = (sy + y + 1) * fBlockWidth;
+							edge.ex = edge.sx + fBlockWidth;
+							edge.ey = edge.sy;
 
-							//Add edge to Polygon Pool
+							//add edge to Polygon Pool
 							int edge_id = vecEdges.size();
 							vecEdges.push_back(edge);
 
-							//Update tile information with edge information
+							//update tile information with edge information
 							world[i].edge_id[SOUTH] = edge_id;
 							world[i].edge_exist[SOUTH] = true;
 						}
 					}
-
 				}
-
 			}
 	}
 
 	void CalculateVisibilityPolygon(float ox, float oy, float radius)
 	{
-		//Get rid of existing polygon
+		//get rid of existing polygon
 		vecVisibilityPolygonPoints.clear();
 
-		//For each edge in PolyMap
+		//for each edge in PolyMap
 		for (auto &e1 : vecEdges)
 		{
-			//Take the start point, then the end point (we could use a pool of
-			//non-duplicated points here, it would be more optimal)
+			//take the start point, then the end point
 			for (int i = 0; i < 2; i++)
 			{
 				float rdx, rdy;
@@ -1214,15 +1682,17 @@ private:
 				float base_ang = atan2f(rdy, rdx);
 
 				float ang = 0;
-				//For each point, cast 3 rays, 1 directly at point
-				//and 1 a little bit either side
+				//for each point, cast 3 rays, 1 directly at point and 1 a little bit either side
 				for (int j = 0; j < 3; j++)
 				{
-					if (j == 0)	ang = base_ang - 0.0001f;
-					if (j == 1)	ang = base_ang;
-					if (j == 2)	ang = base_ang + 0.0001f;
+					if (j == 0)
+						ang = base_ang - 0.0001f;
+					if (j == 1)
+						ang = base_ang;
+					if (j == 2)
+						ang = base_ang + 0.0001f;
 
-					//Create ray along angle for required distance
+					//create ray along angle for required distance
 					rdx = radius * cosf(ang);
 					rdy = radius * sinf(ang);
 
@@ -1230,10 +1700,10 @@ private:
 					float min_px = 0, min_py = 0, min_ang = 0;
 					bool bValid = false;
 
-					//Check for ray intersection with all edges
+					//check for ray intersection with all edges
 					for (auto &e2 : vecEdges)
 					{
-						//Create line segment std::vector
+						//create line segment std::vector
 						float sdx = e2.ex - e2.sx;
 						float sdy = e2.ey - e2.sy;
 
@@ -1244,12 +1714,10 @@ private:
 							//t1 is normalised distance from source along ray to ray length of intersect point
 							float t1 = (e2.sx + sdx * t2 - ox) / rdx;
 
-							//If intersect point exists along ray, and along line 
-							//segment then intersect point is valid
+							//if intersect point exists along ray, and along line segment then intersect point is valid
 							if (t1 > 0 && t2 >= 0 && t2 <= 1.0f)
 							{
-								//Check if this intersect point is closest to source. If
-								//it is, then store this point and reject others
+								//check if this intersect point is closest to source and if it is, then store this point and reject others
 								if (t1 < min_t1)
 								{
 									min_t1 = t1;
@@ -1262,31 +1730,30 @@ private:
 						}
 					}
 
-					if (bValid)//Add intersection point to visibility polygon perimeter
-						vecVisibilityPolygonPoints.push_back({ min_ang, min_px, min_py });
+					if (bValid)
+					{
+						//add intersection point to visibility polygon perimeter
+						vecVisibilityPolygonPoints.push_back({min_ang, min_px, min_py});
+					}
 				}
 			}
 		}
 
-		//Sort perimeter points by angle from source. This will allow
-		//us to draw a triangle fan.
+		//sort perimeter points by angle from source, this will allow us to draw a triangle fan
 		sort(
 			vecVisibilityPolygonPoints.begin(),
 			vecVisibilityPolygonPoints.end(),
-			[&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2)
-		{
-			return std::get<0>(t1) < std::get<0>(t2);
-		});
-
+			[&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2) {
+				return std::get<0>(t1) < std::get<0>(t2);
+			});
 	}
-
 
 public:
 	bool OnUserCreate() override
 	{
 		world = new sCell[nWorldWidth * nWorldHeight];
 
-		//Add a boundary to the world
+		//add a boundary to the world
 		for (int x = 1; x < (nWorldWidth - 1); x++)
 		{
 			world[1 * nWorldWidth + x].exist = true;
@@ -1301,7 +1768,7 @@ public:
 
 		sprLightCast = new JenovaSpace::Sprite("Resources/light_cast.png");
 
-		//Create some screen-sized off-screen buffers for lighting effect
+		//create some screen-sized off-screen buffers for lighting effect
 		buffLightTex = new JenovaSpace::Sprite(ScreenWidth(), ScreenHeight());
 		buffLightRay = new JenovaSpace::Sprite(ScreenWidth(), ScreenHeight());
 		return true;
@@ -1313,7 +1780,7 @@ public:
 		float fSourceX = GetMouseX();
 		float fSourceY = GetMouseY();
 
-		//Set tile map blocks to on or off
+		//set tile map blocks to on or off
 		if (GetMouse(0).bReleased)
 		{
 			//i = y * width + x
@@ -1321,57 +1788,48 @@ public:
 			world[i].exist = !world[i].exist;
 		}
 
-		//Take a region of "TileMap" and convert it to "PolyMap" - This is done
-		//every frame here, but could be a pre-processing stage depending on 
-		//how your final application interacts with tilemaps
+		//take a region of "TileMap" and convert it to "PolyMap"  (also change later, cause as it is now, this is done at every frame lel)
 		ConvertTileMapToPolyMap(0, 0, 40, 30, fBlockWidth, nWorldWidth);
-
 
 		if (GetMouse(1).bHeld)
 		{
 			CalculateVisibilityPolygon(fSourceX, fSourceY, 1000.0f);
 		}
 
-
-
-		//Drawing
+		//drawing
 		SetDrawTarget(nullptr);
 		Clear(JenovaSpace::BLACK);
 
-
 		int nRaysCast = vecVisibilityPolygonPoints.size();
 
-		//Remove duplicate (or simply similar) points from polygon
+		//remove duplicate (or simply similar) points from polygon
 		auto it = unique(
 			vecVisibilityPolygonPoints.begin(),
 			vecVisibilityPolygonPoints.end(),
-			[&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2)
-		{
-			return fabs(std::get<1>(t1) - std::get<1>(t2)) < 0.1f && fabs(std::get<2>(t1) - std::get<2>(t2)) < 0.1f;
-		});
+			[&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2) {
+				return fabs(std::get<1>(t1) - std::get<1>(t2)) < 0.1f && fabs(std::get<2>(t1) - std::get<2>(t2)) < 0.1f;
+			});
 
 		vecVisibilityPolygonPoints.resize(distance(vecVisibilityPolygonPoints.begin(), it));
 
 		int nRaysCast2 = vecVisibilityPolygonPoints.size();
 		DrawString(4, 4, "Rays Cast: " + std::to_string(nRaysCast) + " Rays Drawn: " + std::to_string(nRaysCast2));
 
-
-		//If drawing rays, set an offscreen texture as our target buffer
+		//if drawing rays, set an offscreen texture as our target buffer
 		if (GetMouse(1).bHeld && vecVisibilityPolygonPoints.size() > 1)
 		{
-			//Clear offscreen buffer for sprite
+			//clear offscreen buffer for sprite
 			SetDrawTarget(buffLightTex);
 			Clear(JenovaSpace::BLACK);
 
-			//Draw "Radial Light" sprite to offscreen buffer, centered around 
-			//source location (the mouse coordinates, buffer is 512x512)
+			//draw "Radial Light" sprite to offscreen buffer, centered around source location (the mouse coordinates, buffer is 512x512)
 			DrawSprite(fSourceX - 255, fSourceY - 255, sprLightCast);
 
-			//Clear offsecreen buffer for rays
+			//clear offsecreen buffer for rays
 			SetDrawTarget(buffLightRay);
 			Clear(JenovaSpace::BLANK);
 
-			//Draw each triangle in fan
+			//draw each triangle in fan
 			for (int i = 0; i < vecVisibilityPolygonPoints.size() - 1; i++)
 			{
 				FillTriangle(
@@ -1383,10 +1841,9 @@ public:
 
 					std::get<1>(vecVisibilityPolygonPoints[i + 1]),
 					std::get<2>(vecVisibilityPolygonPoints[i + 1]));
-
 			}
 
-			//Fan will have one open edge, so draw last point of fan to first
+			//fan will have one open edge, so draw last point of fan to first
 			FillTriangle(
 				fSourceX,
 				fSourceY,
@@ -1397,7 +1854,7 @@ public:
 				std::get<1>(vecVisibilityPolygonPoints[0]),
 				std::get<2>(vecVisibilityPolygonPoints[0]));
 
-			//Wherever rays exist in ray sprite, copy over radial light sprite pixels
+			//wherever rays exist in ray sprite, copy over radial light sprite pixels
 			SetDrawTarget(nullptr);
 			for (int x = 0; x < ScreenWidth(); x++)
 				for (int y = 0; y < ScreenHeight(); y++)
@@ -1405,17 +1862,19 @@ public:
 						Draw(x, y, buffLightTex->GetPixel(x, y));
 		}
 
-
-
-		//Draw Blocks from TileMap
+		//draw Blocks from TileMap
 		for (int x = 0; x < nWorldWidth; x++)
+		{
 			for (int y = 0; y < nWorldHeight; y++)
 			{
 				if (world[y * nWorldWidth + x].exist)
+				{
 					FillRect(x * fBlockWidth, y * fBlockWidth, fBlockWidth, fBlockWidth, JenovaSpace::BLUE);
+				}
 			}
+		}
 
-		//Draw Edges from PolyMap
+		//draw Edges from PolyMap
 		for (auto &e : vecEdges)
 		{
 			DrawLine(e.sx, e.sy, e.ex, e.ey);
@@ -1426,6 +1885,8 @@ public:
 		return true;
 	}
 };
+
+#pragma endregion
 
 int main()
 {
