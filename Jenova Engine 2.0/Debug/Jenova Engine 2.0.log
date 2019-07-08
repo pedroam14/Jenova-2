@@ -46,34 +46,34 @@ e:\pedro\jenova engine 2.0\jenova engine 2.0\jenova3d.h(1272): warning C4244: 'a
 e:\pedro\jenova engine 2.0\jenova engine 2.0\jenova3d.h(1459): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 e:\pedro\jenova engine 2.0\jenova engine 2.0\jenova3d.h(1458): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 e:\pedro\jenova engine 2.0\jenova engine 2.0\jenova3d.h(1457): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(235): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(243): warning C4244: 'argument': conversion from 'int32_t' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(243): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(246): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(486): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(508): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(523): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(532): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(546): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(557): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1344): warning C4244: 'initializing': conversion from 'int32_t' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1345): warning C4244: 'initializing': conversion from 'int32_t' to 'float', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1399): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1406): warning C4018: '<': signed/unsigned mismatch
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1416): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1415): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1413): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1412): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1410): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1409): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1429): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1428): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1426): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1425): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1423): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1422): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1446): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1452): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1453): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
-e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1454): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(718): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(724): warning C4244: 'argument': conversion from 'int32_t' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(724): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(727): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(962): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(983): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(998): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1007): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1020): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1031): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1780): warning C4244: 'initializing': conversion from 'int32_t' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1781): warning C4244: 'initializing': conversion from 'int32_t' to 'float', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1826): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1833): warning C4018: '<': signed/unsigned mismatch
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1843): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1842): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1840): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1839): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1837): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1836): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1855): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1854): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1852): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1851): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1849): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1848): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1872): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1880): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1881): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
+e:\pedro\jenova engine 2.0\jenova engine 2.0\jenovaengine.cpp(1882): warning C4244: 'argument': conversion from 'float' to 'int32_t', possible loss of data
   Jenova Engine 2.0.vcxproj -> E:\Pedro\Jenova Engine 2.0\Debug\Jenova Engine 2.0.exe

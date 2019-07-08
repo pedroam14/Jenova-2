@@ -1901,7 +1901,7 @@ int main()
 	}
 	//*/
 
-	///*
+	/*
 	MapEditor demo;
 	if (demo.Construct(640, 480, 2, 2))
 	{
@@ -1910,7 +1910,7 @@ int main()
 	return 0;
 	//*/
 
-	/*
+	///*
 	Polymorphism poly;
 	if (poly.Construct(1600, 980, 1, 1)) {
 		poly.Start();
